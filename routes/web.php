@@ -2,23 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\SignIn;
-use App\Livewire\Auth\SignUp;
 use App\Livewire\ManageContent\ContentList;
 use App\Livewire\ManageProduct\ProductList;
 use App\Livewire\ManagePromotion\PromotionNewsList;
 use App\Livewire\Dashboard;
 
 Route::get('/', function () {
-    return redirect()->route('signup'); // Use 'signup' (lowercase) as defined in Route::name
+    return redirect()->route('login'); // Redirect to login page when accessing "/"
 });
 
-Route::get('/test-firebase', function () {
-    dd(config('firebase.projects.app.credentials'));
-});
-
-
-Route::get('/signup', SignUp::class)->name('signup');
-Route::get('/login', SignIn::class)->name('login');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
