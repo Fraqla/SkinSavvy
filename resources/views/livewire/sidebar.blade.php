@@ -12,5 +12,8 @@
         <li>
             <a href="{{ route('manage-promotion') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Promotion News</a>
         </li>
+        <li>
+            <a href="{{ route('waiting-approval') }}" class="block px-4 py-2 hover:bg-gray-700">Waiting Approval</a>
+        </li>
     </ul>
 </div>

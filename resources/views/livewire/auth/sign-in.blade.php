@@ -1,31 +1,40 @@
-<div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-    <!-- Logo -->
-    <div class="mb-6">
-    <img src="{{ asset('images/skin-savvy-logo.png') }}" alt="My Logo" class="h-20 w-auto mx-auto">
-    </div>
+<div class="min-h-screen flex flex-col justify-center items-center bg-gray-100">
+    <h2 class="mb-6 text-2xl font-bold text-gray-700">Sign In</h2>
 
-    <!-- Sign In Form -->
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 class="text-center text-2xl font-bold text-gray-700 mb-6">Sign In</h2>
+    {{-- Success & Error Messages --}}
+    @if (session()->has('message'))
+        <div class="mb-4 w-full max-w-md bg-green-100 text-green-700 p-3 rounded-md shadow-sm">
+            {{ session('message') }}
+        </div>
+    @endif
 
-        <!-- Form Start -->
-        <form wire:submit.prevent="login">
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" wire:model="email" id="email" class="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-            </div>
+    @if (session()->has('error'))
+        <div class="mb-4 w-full max-w-md bg-red-100 text-red-700 p-3 rounded-md shadow-sm">
+            {{ session('error') }}
+        </div>
+    @endif
 
-            <div class="mb-4">
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" wire:model="password" id="password" class="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-            </div>
+    {{-- Sign In Form --}}
+    <form wire:submit.prevent="login" class="w-full max-w-md bg-white p-8 shadow-md rounded">
+        <div class="mb-4">
+            <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+            <input type="email" wire:model="email" class="w-full px-4 py-2 border rounded-md" placeholder="you@example.com">
+            @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+        </div>
 
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                Sign In
-            </button>
-        </form>
-        <!-- Form End -->
-    </div>
+        <div class="mb-4">
+            <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+            <input type="password" wire:model="password" class="w-full px-4 py-2 border rounded-md" placeholder="******">
+            @error('password') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+        </div>
+
+        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
+            Sign In
+        </button>
+
+        <p class="mt-4 text-sm text-gray-600">
+            Don’t have an account? 
+            <button type="button" wire:click="redirectToSignup" class="text-blue-500 hover:underline">Sign Up</button>
+        </p>
+    </form>
 </div>

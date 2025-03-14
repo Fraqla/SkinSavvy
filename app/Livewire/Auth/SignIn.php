@@ -9,24 +9,35 @@ class SignIn extends Component
 {
     public $email, $password;
 
-    protected $rules = [
-        'email' => 'required|email',
-        'password' => 'required|min:6',
-    ];
-
     public function login()
     {
-        $this->validate();
-
-        if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
-            return redirect()->route('dashboard'); // Redirect to dashboard after login
+        $credentials = ['email' => $this->email, 'password' => $this->password];
+    
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            session()->regenerate();
+    
+            // Redirect to waiting page if status is pending
+            if ($user->role === 'admin_consultant' && $user->status === 'pending') {
+                return redirect()->route('waiting-approval')->with('message', 'Your account is awaiting approval.');
+            }
+    
+            // Redirect to dashboard if approved or other roles
+            return redirect()->route('dashboard');
         }
-
-        session()->flash('error', 'Invalid credentials.');
+    
+        session()->flash('error', 'Invalid login credentials');
     }
+    
 
     public function render()
     {
-        return view('livewire.auth.sign-in')->layout('layouts.auth'); // Use your layout
+        return view('livewire.auth.sign-in');
+    }
+
+    // Redirect to sign-up page
+    public function redirectToSignup()
+    {
+        return redirect()->route('sign-up');
     }
 }
