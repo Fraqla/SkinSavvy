@@ -4,24 +4,50 @@ namespace App\Livewire\ManageUser;
 
 use Livewire\Component;
 use App\Models\User;
+use App\Models\Role;
 
 class AdminConsultantApproval extends Component
 {
-    public function render()
+    public $pendingAdmins;
+
+    public function mount()
     {
-        $pendingUsers = User::where('role', 'admin_consultant')->where('status', 'pending')->get();
-        return view('livewire.manage-user.admin-consultant-approval', compact('pendingUsers'));
+        $this->loadPendingAdmins();
+    }
+
+    public function loadPendingAdmins()
+    {
+        $adminConsultantRole = Role::where('name', 'admin_consultant')->first();
+
+        if ($adminConsultantRole) {
+            $this->pendingAdmins = User::whereHas('roles', function ($query) use ($adminConsultantRole) {
+                $query->where('role_id', $adminConsultantRole->id);
+            })->where('status', 'pending')->get();
+        }
     }
 
     public function approve($userId)
     {
-        User::where('id', $userId)->update(['status' => 'active']);
-        session()->flash('message', 'Admin Consultant approved!');
+        $user = User::find($userId);
+        if ($user) {
+            $user->update(['status' => 'active']);
+            session()->flash('success', 'Admin consultant approved successfully!');
+        }
+        $this->loadPendingAdmins(); // Refresh list
     }
 
-    public function reject($userId)
+    public function remove($userId)
     {
-        User::where('id', $userId)->update(['status' => 'rejected']);
-        session()->flash('message', 'Admin Consultant rejected!');
+        $user = User::find($userId);
+        if ($user) {
+            $user->delete();
+            session()->flash('error', 'Admin consultant account removed.');
+        }
+        $this->loadPendingAdmins();
+    }
+
+    public function render()
+    {
+        return view('livewire.manage-user.admin-consultant-approval');
     }
 }

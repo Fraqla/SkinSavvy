@@ -18,7 +18,7 @@ class SignIn extends Component
             session()->regenerate();
     
             // Redirect to waiting page if status is pending
-            if ($user->role === 'admin_consultant' && $user->status === 'pending') {
+            if ( $user->status === 'pending') {
                 return redirect()->route('waiting-approval')->with('message', 'Your account is awaiting approval.');
             }
     

@@ -14,7 +14,6 @@ class SystemAdminSeeder extends Seeder
         ], [
             'name' => 'System Admin',
             'password' => bcrypt('admin123'),
-            'role' => 'system_admin',
             'status' => 'active',
         ]);
     }

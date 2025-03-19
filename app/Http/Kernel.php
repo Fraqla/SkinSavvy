@@ -4,6 +4,7 @@ namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
+
 class Kernel extends HttpKernel
 {
     protected $middleware = [
@@ -44,7 +45,12 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'checkRole' => \App\Http\Middleware\CheckRole::class,
-        'checkStatus' => \App\Http\Middleware\CheckStatus::class,
+        'checkStatus' => \App\Http\Middleware\CheckAdminConsultantStatus::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        'system_admin' => \App\Http\Middleware\SystemAdminMiddleware::class,
+
 
     ];
 }
