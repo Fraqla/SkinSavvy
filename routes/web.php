@@ -12,6 +12,7 @@ use App\Livewire\Actions\Logout;
 use App\Livewire\ManageRole\ManageRoles;
 use App\Livewire\ManageProduct\ManageProducts;
 use App\Livewire\ManageCategory\ManageCategory;
+use App\Livewire\ManageUser\ManageUsers;
 
 Route::get('/', function () {
     return redirect()->route('sign-in'); // Redirect to login page when accessing "/"
@@ -35,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['auth', 'can:manage product'])->group(function () {
         Route::get('/manage-product', ManageProducts::class)->name('manage-product');
+        Route::get('/product-details/{id}', [ManageProducts::class, 'show'])->name('product.details');
     });
 
     Route::middleware(['auth', 'can:manage category'])->group(function () {
@@ -45,7 +47,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('/admin-approval', AdminConsultantApproval::class)->name('admin-approval');
     });
-    
+
+    Route::middleware(['auth', 'can:manage user'])->group(function () {
+        Route::get('/manage-user', ManageUsers::class)->name('manage-user');
+    });
 
    // Waiting approval page
 Route::get('/waiting-approval', function () {

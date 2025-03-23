@@ -9,12 +9,6 @@
     </li>
 @endcan
 
-@can('manage product')
-    <li>
-        <a href="{{ route('manage-product') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Product</a>
-    </li>
-@endcan
-
 @can('manage promotion news')
     <li>
         <a href="{{ route('manage-promotion') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Promotion News</a>
@@ -48,6 +42,12 @@
 @can('manage category')
     <li>
         <a href="{{ route('manage-category') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Category</a>
+    </li>
+@endcan
+
+@can('manage user')
+    <li>
+        <a href="{{ route('manage-user') }}" class="block px-4 py-2 hover:bg-gray-700">Manage User</a>
     </li>
 @endcan
 

@@ -54,6 +54,11 @@ class User extends Authenticatable
     return $this->role === 'admin_consultant';
 }
 
+public function userRole()
+{
+    return $this->hasOne('Spatie\Permission\Models\Role', 'id', 'role_id')
+        ->via('model_has_roles', 'model_id');
+}
 
 
 }

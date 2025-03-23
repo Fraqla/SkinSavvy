@@ -4,8 +4,24 @@
     <div class="p-6 bg-gray-100 min-h-screen w-full">
         <h1 class="text-2xl font-bold mb-6">Manage Products</h1>
 
-        <!-- Top Controls: Add Product Button -->
+        <!-- Search Bar with Dropdown Filter -->
         <div class="flex justify-between items-center mb-4">
+            <div class="flex w-2/3 space-x-2">
+                <select wire:model="searchBy" class="p-2 border rounded shadow bg-white">
+                    <option value="name">Name</option>
+                    <option value="category">Category</option>
+                </select>
+                <input type="text" wire:model.defer="search" placeholder="Search products..."
+                    class="p-2 border shadow w-full rounded">
+                <button wire:click="performSearch"
+                    class="px-3 py-2 bg-blue-500 text-white font-semibold rounded shadow hover:bg-blue-600 transition duration-300 ease-in-out text-sm">
+                    Search
+                </button>
+                <button wire:click="resetSearch"
+                    class="px-3 py-2 bg-gray-500 text-white font-semibold rounded shadow hover:bg-gray-600 transition duration-300 ease-in-out text-sm">
+                    Reset
+                </button>
+            </div>
             <button wire:click="showAddProductForm"
                 class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-300 ease-in-out">
                 + Add Product
@@ -36,6 +52,12 @@
                                     class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200">
                                     🗑️ Delete
                                 </button>
+                                <button wire:click="viewProductDetails({{ $product->id }})"
+                                    class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">
+                                    🔍 View
+                                </button>
+
+
                             </td>
                         </tr>
                     @empty
@@ -54,7 +76,7 @@
             </div>
         @endif
 
-        <!-- Include Add & Edit Product Forms -->
+        <!-- Include Add, Edit, Delete, and Product Details Forms -->
         @if($showAddForm)
             @include('livewire.manage-product.product-add')
         @endif
@@ -65,6 +87,10 @@
 
         @if($confirmingProductDeletion)
             @include('livewire.manage-product.product-delete')
+        @endif
+
+        @if($showProductDetails)
+            @include('livewire.manage-product.product-details')
         @endif
     </div>
 </div>

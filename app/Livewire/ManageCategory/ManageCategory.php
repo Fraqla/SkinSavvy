@@ -16,6 +16,7 @@ class ManageCategory extends Component
     public $confirmingDeletion = false;
     public $categoryToDelete = null;
     protected $paginationTheme = 'tailwind';
+    public $searchBy = 'name';
 
     public function render()
     {
@@ -93,11 +94,13 @@ public function deleteConfirmed()
     $this->confirmingDeletion = false;
     $this->categoryToDelete = null;
 }
-    // Toggle select all
-    public function toggleSelectAll()
-    {
-        $this->selectedCategories = $this->selectAll ? Category::pluck('id')->toArray() : [];
-    }
+public function cancel()
+{
+    $this->resetFields();
+    $this->showEditForm = false;
+    $this->showAddForm = false;
+    $this->dispatch('refresh');
+}
 
     // Reset fields and forms
     private function resetFields()
@@ -107,4 +110,27 @@ public function deleteConfirmed()
         $this->showAddForm = false;
         $this->showEditForm = false;
     }
+
+    public function performSearch()
+{
+    $query = Category::query();
+
+    if ($this->search) {
+        if ($this->searchBy === 'category') {
+            $query->whereHas('category', function ($q) {
+                $q->where('name', 'like', '%' . $this->search . '%');
+            });
+        } else {
+            $query->where($this->searchBy, 'like', '%' . $this->search . '%');
+        }
+    }
+
+    $this->category_id = $query->get();
+}
+
+public function resetSearch()
+{
+    $this->search = '';
+    $this->performSearch();
+}
 }

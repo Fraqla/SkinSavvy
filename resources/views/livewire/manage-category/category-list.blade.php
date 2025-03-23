@@ -6,8 +6,22 @@
 
         <!-- Search Bar -->
         <div class="flex justify-between items-center mb-4">
-            <input type="text" wire:model="search" placeholder="Search categories..."
-                class="w-1/2 p-2 border rounded shadow">
+    <div class="flex w-2/3 space-x-2">
+        <select wire:model="searchBy" class="p-2 border rounded shadow bg-white">
+            <option value="name">Name</option>
+            <option value="category">Category</option>
+        </select>
+        <input type="text" wire:model.defer="search" placeholder="Search products..." 
+               class="p-2 border shadow w-full rounded">
+        <button wire:click="performSearch"
+                class="px-3 py-2 bg-blue-500 text-white font-semibold rounded shadow hover:bg-blue-600 transition duration-300 ease-in-out text-sm">
+            Search
+        </button>
+        <button wire:click="resetSearch"
+                class="px-3 py-2 bg-gray-500 text-white font-semibold rounded shadow hover:bg-gray-600 transition duration-300 ease-in-out text-sm">
+            Reset
+        </button>
+    </div>
             <button wire:click="showAddCategoryForm"
                 class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-300 ease-in-out">
                 + Add Category
@@ -29,9 +43,6 @@
             <table class="table-auto w-full text-left border-collapse">
                 <thead class="bg-gray-200 text-gray-700 uppercase text-sm leading-normal">
                     <tr>
-                        <th class="px-4 py-2">
-                            <input type="checkbox" wire:model="selectAll" wire:click="toggleSelectAll">
-                        </th>
                         <th class="px-4 py-2">Category Name</th>
                         <th class="px-4 py-2 text-center">Actions</th>
                     </tr>
@@ -39,9 +50,6 @@
                 <tbody class="text-gray-600 text-sm">
                     @forelse($categories as $category)
                         <tr class="border-t hover:bg-gray-100 transition">
-                            <td class="px-4 py-2">
-                                <input type="checkbox" wire:model="selectedCategories" value="{{ $category->id }}">
-                            </td>
                             <td class="px-4 py-2">{{ $category->name }}</td>
                             <td class="px-4 py-2 text-center flex justify-center gap-2">
                                 <button wire:click="showEditCategoryForm({{ $category->id }})"

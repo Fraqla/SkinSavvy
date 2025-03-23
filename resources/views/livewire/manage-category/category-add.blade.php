@@ -6,7 +6,8 @@
         @error('name') <span class="text-red-500">{{ $message }}</span> @enderror
         <div class="flex justify-end gap-2">
             <button wire:click="store" class="bg-blue-500 px-4 py-2 text-white rounded hover:bg-blue-600">Save</button>
-            <button wire:click="resetFields" class="bg-gray-400 px-4 py-2 text-white rounded hover:bg-gray-500">Cancel</button>
+            <button type="button" wire:click="cancel"
+                    class="bg-gray-400 px-4 py-2 text-white rounded hover:bg-gray-500">Cancel</button>
         </div>
     </div>
 </div>

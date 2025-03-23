@@ -27,6 +27,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'admin approval',
             'manage product',
             'manage category',
+            'manage user',
         ];
 
         // Create permissions (avoid duplicates)
@@ -54,6 +55,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'manage roles',
                 'admin approval',
                 'manage category',
+                'manage user',
             ],
         ];
 
