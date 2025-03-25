@@ -1,10 +1,11 @@
 <?php
 
 
+use App\Livewire\ManageContent\ManageContent;
+use App\Livewire\ManageContent\ManagePromotion;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\SignIn;
 use App\Livewire\Auth\SignUp;
-use App\Livewire\ManageContent\ContentList;
 use App\Livewire\ManagePromotion\PromotionNewsList;
 use App\Livewire\Dashboard;
 use App\Livewire\ManageUser\AdminConsultantApproval;
@@ -13,6 +14,11 @@ use App\Livewire\ManageRole\ManageRoles;
 use App\Livewire\ManageProduct\ManageProducts;
 use App\Livewire\ManageCategory\ManageCategory;
 use App\Livewire\ManageUser\ManageUsers;
+use App\Livewire\ManageContent\Ingredient;
+use App\Livewire\ManageContent\Prohibited;
+use App\Livewire\ManageContent\ManageSkinKnowledge;
+use App\Livewire\ManageContent\SkinQuiz;
+use App\Livewire\ManageContent\Tips;
 
 Route::get('/', function () {
     return redirect()->route('sign-in'); // Redirect to login page when accessing "/"
@@ -31,9 +37,17 @@ Route::get('/sign-in', SignIn::class)->name('sign-in');
 Route::get('/sign-up', SignUp::class)->name('sign-up');
 Route::get('/dashboard', Dashboard::class)->name('dashboard')->middleware('auth');
 Route::middleware(['auth'])->group(function () {
-    Route::get('/manage-content', ContentList::class)->name('manage-content');
     Route::get('/manage-promotion', PromotionNewsList::class)->name('manage-promotion');
 
+    Route::middleware(['auth', 'can:manage content'])->group(function () {
+        Route::get('/manage-content', ManageContent::class)->name('manage-content');
+        Route::get('/skinknowledge', ManageSkinKnowledge::class)->name('manage-content.skin-knowledge.skinknowledge');
+        Route::get('/skinquiz', SkinQuiz::class)->name('manage-content.skinquiz');
+        Route::get('/ingredient', Ingredient::class)->name('manage-content.ingredient');
+        Route::get('/tips', Tips::class)->name('manage-content.tips');
+        Route::get('/promotion', ManagePromotion::class)->name('manage-content.promotion');
+        Route::get('/prohibited', Prohibited::class)->name('manage-content.prohibited');
+    });
     Route::middleware(['auth', 'can:manage product'])->group(function () {
         Route::get('/manage-product', ManageProducts::class)->name('manage-product');
         Route::get('/product-details/{id}', [ManageProducts::class, 'show'])->name('product.details');
