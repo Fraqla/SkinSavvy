@@ -4,38 +4,49 @@ namespace App\Livewire\ManageUser;
 
 use App\Models\User;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Spatie\Permission\Models\Role;
 
 class ManageUsers extends Component
 {
+    use WithPagination;
+    
     public $selectedRole = 'all';
     public $roles = [];
+    public $search = '';
 
     public function mount()
     {
-        // Fetch roles from the roles table, prepend 'all'
-        $this->roles = Role::pluck('name')->prepend('all')->toArray();
+        $this->roles = Role::pluck('name')->toArray();
+        array_unshift($this->roles, 'all');
     }
 
-    public function updatedSelectedRole()
+    public function updatingSelectedRole()
     {
-        // Ensure the component re-renders on role change
-        $this->render();
+        $this->resetPage();
     }
 
     public function render()
     {
-        // Build the user query with role filter
-        $query = User::select('users.id', 'users.name', 'users.email', 'roles.name as role_name')
-            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id');
+        $users = User::query()
+            ->when($this->selectedRole !== 'all', function($query) {
+                $query->whereHas('roles', function($q) {
+                    $q->where('name', $this->selectedRole);
+                });
+            })
+            ->with('roles')
+            ->select('users.id', 'users.name', 'users.email')
+            ->paginate(10);
 
-        if ($this->selectedRole !== 'all') {
-            $query->where('roles.name', $this->selectedRole);
-        }
+        // Add role_name to each user
+        $users->getCollection()->transform(function($user) {
+            $user->role_name = $user->roles->first()?->name ?? 'No Role';
+            return $user;
+        });
 
-        $users = $query->get();
-
-        return view('livewire.manage-user.user-list', ['users' => $users]);
+        return view('livewire.manage-user.user-list', [
+            'users' => $users,
+            'roles' => $this->roles
+        ]);
     }
 }

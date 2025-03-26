@@ -1,57 +1,109 @@
-<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
-        <h2 class="text-xl font-semibold mb-4">Add Skin Knowledge</h2>
-
-        <!-- Skin Type Input -->
-        <div class="mb-4">
-            <label class="block text-gray-700">Skin Type</label>
-            <input type="text" wire:model="skin_type" class="w-full px-4 py-2 border rounded">
-            @error('skin_type') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+<div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300 overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 my-8">
+        <!-- Modal Header -->
+        <div class="sticky top-0 bg-gradient-to-r from-pink-50 to-purple-50 px-6 py-4 border-b border-gray-200 z-10">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add New Skin Knowledge
+                </h2>
+                <button wire:click="hideForms" class="text-gray-400 hover:text-gray-500 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
-        <!-- Dynamic Characteristics Input -->
-        <div class="mb-4">
-            <label class="block text-gray-700">Characteristics</label>
-            @foreach($characteristics as $index => $characteristic)
-                <div class="flex items-center gap-2 mb-2">
-                    <input type="text" wire:model="characteristics.{{ $index }}" class="w-full px-4 py-2 border rounded">
-                    <button wire:click.prevent="removeCharacteristic({{ $index }})" class="bg-red-500 text-white px-2 py-1 rounded">-</button>
+        <!-- Modal Content -->
+        <form wire:submit.prevent="store" enctype="multipart/form-data" class="p-6 space-y-6">
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Skin Type -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Skin Type</label>
+                    <input type="text" wire:model="skin_type" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200" 
+                           placeholder="e.g. Oily, Dry, Combination">
+                    @error('skin_type') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
                 </div>
-            @endforeach
-            <button wire:click.prevent="addCharacteristic" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2">+ Add Characteristic</button>
-        </div>
 
-        <!-- Dynamic Best Ingredients Input -->
-        <div class="mb-4">
-            <label class="block text-gray-700">Best Ingredients</label>
-            @foreach($best_ingredients as $index => $ingredient)
-                <div class="flex items-center gap-2 mb-2">
-                    <input type="text" wire:model="best_ingredient.{{ $index }}" class="w-full px-4 py-2 border rounded">
-                    <button wire:click.prevent="removeIngredient({{ $index }})" class="bg-red-500 text-white px-2 py-1 rounded">-</button>
+                <!-- Image Upload -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Skin Type Image</label>
+                    
+                    @if($tempImage)
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-500 mb-2">Image Preview:</p>
+                            <div class="relative w-40 h-40 rounded-lg overflow-hidden border border-gray-200">
+                                <img src="{{ $tempImage }}" 
+                                     class="w-full h-full object-cover" />
+                                <div class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition duration-200">
+                                    <span class="text-white text-sm font-medium">Preview</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    
+                    <div class="flex items-center justify-center w-full">
+                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-200">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500">
+                                    <span class="font-semibold">Click to upload</span> or drag and drop
+                                </p>
+                                <p class="text-xs text-gray-500">PNG, JPG (MAX. 5MB)</p>
+                            </div>
+                            <input type="file" wire:model="image" class="hidden" />
+                        </label>
+                    </div>
+                    @error('image') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
                 </div>
-            @endforeach
-            <button wire:click.prevent="addIngredient" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2">+ Add Ingredient</button>
-        </div>
 
-        <!-- Image Upload -->
-        <div class="mb-4">
-            <label class="block text-gray-700">Image</label>
-            <input type="file" wire:model="image" class="w-full px-4 py-2 border rounded">
-            @error('image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <!-- Characteristics -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Characteristics</label>
+                    <textarea wire:model="characteristics" rows="4"
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200"
+                              placeholder="Describe the key characteristics of this skin type..."></textarea>
+                    @error('characteristics') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
+                </div>
 
-            @if($image)
-                <img src="{{ $image->temporaryUrl() }}" class="mt-2 h-20 w-20 object-cover">
-            @endif
-        </div>
+                <!-- Best Ingredients -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Best Ingredients</label>
+                    <textarea wire:model="best_ingredient" rows="4"
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200"
+                              placeholder="List the most beneficial ingredients for this skin type..."></textarea>
+                    @error('best_ingredient') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
+                </div>
 
-        <!-- Save/Cancel Buttons -->
-        <div class="flex justify-end space-x-2">
-            <button wire:click="save" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                Save
-            </button>
-            <button wire:click="$set('isAddFormVisible', false)" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                Cancel
-            </button>
-        </div>
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea wire:model="description" rows="4"
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200"
+                              placeholder="Provide a detailed description of this skin type..."></textarea>
+                    @error('description') <span class="text-sm text-red-600 mt-1">{{ $message }}</span> @enderror
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="sticky bottom-0 bg-white pt-4 pb-2 border-t border-gray-200">
+                <div class="flex justify-end space-x-3">
+                    <button type="button" wire:click="hideForms"
+                            class="px-6 py-2.5 border border-gray-300 text-sm font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-200">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-200">
+                        Save Skin Knowledge
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>

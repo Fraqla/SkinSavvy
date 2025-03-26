@@ -3,177 +3,134 @@
 namespace App\Livewire\ManageContent;
 
 use Livewire\Component;
-use Livewire\WithFileUploads;
 use App\Models\Content\SkinKnowledge;
+use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
 class ManageSkinKnowledge extends Component
 {
-    use WithFileUploads;
+    use WithPagination, WithFileUploads;
 
-    public $skinKnowledges;
-    public $skin_type = '', $characteristics = [], $best_ingredients = [], $image;
+    public $skin_type, $characteristics, $best_ingredient, $description, $image;
+    public $tempImage;
+    public $skinKnowledgeId;
     public $isAddFormVisible = false;
     public $isEditFormVisible = false;
-    public $editingId;
-    public $skinDetails = [];
-    public $showSkinDetails = false;
-    public $knowledgeId = null;
+    public $isDeleteFormVisible = false;
+    public $isDetailsModalVisible = false;
+    public $selectedSkinKnowledge;
 
-    public function mount($knowledgeId = null)
+    protected $rules = [
+        'skin_type' => 'required|string|max:255',
+        'characteristics' => 'required|string',
+        'best_ingredient' => 'required|string',
+        'description' => 'required|string',
+        'image' => 'nullable|image|max:2048',
+    ];
+
+    public function render()
     {
-        $this->knowledgeId = $knowledgeId;
-
-        if ($knowledgeId) {
-            $knowledge = SkinKnowledge::find($knowledgeId);
-            $this->skin_type = $knowledge->skin_type;
-            $this->characteristics = json_decode($knowledge->characteristics, true) ?? [];
-            $this->best_ingredients = json_decode($knowledge->best_ingredients, true) ?? [];
-            $this->image = $knowledge->image;
-        }
-        $this->skinKnowledges = SkinKnowledge::all();
+        $skinKnowledges = SkinKnowledge::paginate(10);
+        return view('livewire.manage-content.skin-knowledge.knowledge-list', compact('skinKnowledges'));
     }
 
     public function showAddForm()
     {
-        $this->resetForm();
+        $this->resetInputFields();
         $this->isAddFormVisible = true;
-        $this->isEditFormVisible = false;
     }
 
     public function showEditForm($id)
     {
-        $this->resetForm();
-        $knowledge = SkinKnowledge::find($id);
-
-        if ($knowledge) {
-            $this->editingId = $id;
-            $this->skin_type = $knowledge->skin_type;
-            $this->characteristics = $knowledge->characteristics ?? [];
-
-            $this->best_ingredients = json_decode($knowledge->best_ingredients, true) ?? [];
-            $this->image = $knowledge->image ? asset('storage/' . $knowledge->image) : null;
-
-            $this->isAddFormVisible = false;
-            $this->isEditFormVisible = true;
-
-            $this->dispatch('formOpened');
-        }
+        $skinKnowledge = SkinKnowledge::findOrFail($id);
+        $this->skinKnowledgeId = $id;
+        $this->skin_type = $skinKnowledge->skin_type;
+        $this->characteristics = $skinKnowledge->characteristics;
+        $this->best_ingredient = $skinKnowledge->best_ingredient;
+        $this->description = $skinKnowledge->description;
+        $this->tempImage = $skinKnowledge->image ? asset('storage/'.$skinKnowledge->image) : null;
+        $this->isEditFormVisible = true;
     }
 
-    public function save()
+    public function showDeleteForm($id)
     {
-        $this->validate([
-            'skin_type' => 'required',
-            'characteristics' => 'required|array|min:1',
-            'best_ingredients' => 'required|array|min:1',
-            'image' => $this->knowledgeId ? 'nullable|image|max:1024' : 'required|image|max:1024',
-        ]);
+        $this->skinKnowledgeId = $id;
+        $this->isDeleteFormVisible = true;
+    }
 
-        $imagePath = $this->image ? $this->image->store('skin_knowledge', 'public') : null;
+    public function showDetails($id)
+    {
+        $this->selectedSkinKnowledge = SkinKnowledge::findOrFail($id);
+        $this->isDetailsModalVisible = true;
+    }
 
-        SkinKnowledge::create([
-            'skin_type' => $this->skin_type,
-            'characteristics' => json_encode($this->characteristics),
-            'best_ingredient' => json_encode($this->best_ingredient), // ✅ Include this line
-            'image' => $this->image->store('skin_knowledge', 'public'),
-        ]);
-        
-
-        session()->flash('message', 'Skin knowledge saved successfully!');
-        $this->reset(['skin_type', 'characteristics', 'best_ingredients', 'image']);
+    public function hideForms()
+    {
         $this->isAddFormVisible = false;
-        $this->skinKnowledges = SkinKnowledge::all();
-    }
-
-    public function update()
-    {
-        $this->validate([
-            'skin_type' => 'required',
-            'characteristics' => 'required|array|min:1',
-            'best_ingredients' => 'required|array|min:1',
-            'image' => 'nullable|image|max:1024',
-        ]);
-
-        $knowledge = SkinKnowledge::find($this->editingId);
-
-        if ($knowledge) {
-            if ($this->image && is_object($this->image)) {
-                $knowledge->image = $this->image->store('skin_knowledge', 'public');
-            }
-
-            $knowledge->update([
-                'skin_type' => $this->skin_type,
-                'characteristics' => json_encode($this->characteristics),
-                'best_ingredients' => json_encode($this->best_ingredients),
-            ]);
-        }
-
-        $this->resetForm();
-        $this->skinKnowledges = SkinKnowledge::all();
         $this->isEditFormVisible = false;
+        $this->isDeleteFormVisible = false;
+        $this->isDetailsModalVisible = false;
+        $this->resetInputFields();
     }
 
-    public function delete($id)
+    public function store()
     {
-        SkinKnowledge::find($id)->delete();
-        $this->skinKnowledges = SkinKnowledge::all();
-    }
+        $this->validate();
 
-    public function viewSkinDetails($knowledgeId)
-    {
-        $knowledge = SkinKnowledge::find($knowledgeId);
-
-        $this->skinDetails = [
-            'skin_type' => $knowledge->skin_type,
-            'characteristics' => json_decode($knowledge->characteristics, true),
-            'best_ingredients' => json_decode($knowledge->best_ingredients, true),
-            'image' => $knowledge->image,
+        $data = [
+            'skin_type' => $this->skin_type,
+            'characteristics' => $this->characteristics,
+            'best_ingredient' => $this->best_ingredient,
+            'description' => $this->description,
         ];
 
-        $this->showSkinDetails = true;
+        if ($this->image) {
+            // Delete old image if updating
+            if ($this->skinKnowledgeId) {
+                $oldSkinKnowledge = SkinKnowledge::find($this->skinKnowledgeId);
+                if ($oldSkinKnowledge->image) {
+                    Storage::disk('public')->delete($oldSkinKnowledge->image);
+                }
+            }
+            $data['image'] = $this->image->store('skin-knowledge', 'public');
+        }
+
+        SkinKnowledge::updateOrCreate(['id' => $this->skinKnowledgeId], $data);
+
+        session()->flash('message', 
+            $this->skinKnowledgeId ? 'Skin knowledge updated successfully.' : 'Skin knowledge created successfully.');
+
+        $this->hideForms();
     }
 
-    public function closeDetails()
+    public function updatedImage()
     {
-        $this->showSkinDetails = false;
+        $this->validate([
+            'image' => 'image|max:2048',
+        ]);
+        $this->tempImage = $this->image->temporaryUrl();
     }
 
-    private function resetForm()
+    public function delete()
+    {
+        $skinKnowledge = SkinKnowledge::find($this->skinKnowledgeId);
+        if ($skinKnowledge->image) {
+            Storage::disk('public')->delete($skinKnowledge->image);
+        }
+        $skinKnowledge->delete();
+        session()->flash('message', 'Skin knowledge deleted successfully.');
+        $this->hideForms();
+    }
+
+    private function resetInputFields()
     {
         $this->skin_type = '';
-        $this->characteristics = [];
-        $this->best_ingredients = [];
+        $this->characteristics = '';
+        $this->best_ingredient = '';
+        $this->description = '';
         $this->image = null;
-        $this->editingId = null;
-        $this->knowledgeId = null;
-        $this->isAddFormVisible = false;
-        $this->isEditFormVisible = false;
-    }
-
-    public function addIngredient()
-    {
-        $this->best_ingredients[] = '';
-    }
-    
-    public function removeIngredient($index)
-    {
-        unset($this->best_ingredients[$index]);
-        $this->best_ingredients = array_values($this->best_ingredients);
-    }
-    
-    public function addCharacteristic()
-    {
-        $this->characteristics[] = '';
-    }
-
-    public function removeCharacteristic($index)
-    {
-        unset($this->characteristics[$index]);
-        $this->characteristics = array_values($this->characteristics);
-    }
-
-    public function render()
-    {
-        return view('livewire.manage-content.skin-knowledge.skin-knowledge-list');
+        $this->tempImage = null;
+        $this->skinKnowledgeId = null;
     }
 }

@@ -16,6 +16,9 @@
         "vite": "^6.0.11"
     },
     "dependencies": {
-        "alpinejs": "^3.14.9"
+        "@ckeditor/ckeditor5-build-classic": "^44.3.0",
+        "alpinejs": "^3.14.9",
+        "quill": "^2.0.3",
+        "trix": "^2.1.13"
     }
 }

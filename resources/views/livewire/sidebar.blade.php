@@ -1,55 +1,93 @@
-<div class="w-64 bg-gray-800 min-h-screen text-white">
-    <div class="p-4 text-xl font-bold border-b border-gray-700">
-        Admin Dashboard
+<div class="w-64 bg-gradient-to-b from-purple-900 to-pink-800 min-h-screen text-white shadow-xl">
+    <!-- Logo/Branding -->
+    <div class="p-6 border-b border-pink-700 flex items-center space-x-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+        <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-300 to-purple-200">
+            SkinSavvy Admin
+        </span>
     </div>
-    <ul class="mt-4 space-y-2">
-    @can('manage content')
-    <li>
-        <a href="{{ route('manage-content') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Content</a>
-    </li>
-@endcan
 
-@can('manage promotion news')
-    <li>
-        <a href="{{ route('manage-promotion') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Promotion News</a>
-    </li>
-@endcan
+    <!-- Navigation Menu -->
+    <ul class="mt-6 space-y-1 px-3">
+        @can('manage content')
+        <li>
+            <a href="{{ route('manage-content') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                Manage Content
+            </a>
+        </li>
+        @endcan
 
-@can('waiting approval')
-    <li>
-        <a href="{{ route('waiting-approval') }}" class="block px-4 py-2 hover:bg-gray-700">Waiting Approval</a>
-    </li>
-@endcan
+        @can('waiting approval')
+        <li>
+            <a href="{{ route('waiting-approval') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Waiting Approval
+                <span class="ml-auto bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded-full">3</span>
+            </a>
+        </li>
+        @endcan
 
-@can('manage roles')
-    <li>
-        <a href="{{ route('manage-roles') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Roles</a>
-    </li>
-@endcan
+        @can('manage roles')
+        <li>
+            <a href="{{ route('manage-roles') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Manage Roles
+            </a>
+        </li>
+        @endcan
 
-@can('admin approval')
-    <li>
-        <a href="{{ route('admin-approval') }}" class="block px-4 py-2 hover:bg-gray-700">Admin Consultant</a>
-    </li>
-@endcan
+        @can('admin approval')
+        <li>
+            <a href="{{ route('admin-approval') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Admin Consultant
+            </a>
+        </li>
+        @endcan
 
-@can('manage product')
-    <li>
-        <a href="{{ route('manage-product') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Product</a>
-    </li>
-@endcan
+        @can('manage product')
+        <li>
+            <a href="{{ route('manage-product') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                Manage Products
+            </a>
+        </li>
+        @endcan
 
-@can('manage category')
-    <li>
-        <a href="{{ route('manage-category') }}" class="block px-4 py-2 hover:bg-gray-700">Manage Category</a>
-    </li>
-@endcan
+        @can('manage category')
+        <li>
+            <a href="{{ route('manage-category') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                Manage Categories
+            </a>
+        </li>
+        @endcan
 
-@can('manage user')
-    <li>
-        <a href="{{ route('manage-user') }}" class="block px-4 py-2 hover:bg-gray-700">Manage User</a>
-    </li>
-@endcan
-
+        @can('manage user')
+        <li>
+            <a href="{{ route('manage-user') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                Manage Users
+            </a>
+        </li>
+        @endcan
     </ul>
 </div>

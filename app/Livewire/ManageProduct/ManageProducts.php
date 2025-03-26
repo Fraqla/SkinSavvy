@@ -20,6 +20,7 @@ class ManageProducts extends Component
     public $searchBy = 'name';
     public $showProductDetails = false;
     public $productDetails = [];
+    public $selectedCategory = '';
 
 
 
@@ -152,7 +153,7 @@ class ManageProducts extends Component
     public function performSearch()
     {
         $query = Product::query();
-
+    
         if ($this->search) {
             if ($this->searchBy === 'category') {
                 $query->whereHas('category', function ($q) {
@@ -162,16 +163,24 @@ class ManageProducts extends Component
                 $query->where($this->searchBy, 'like', '%' . $this->search . '%');
             }
         }
-
+    
+        // Add category filter
+        if ($this->selectedCategory) {
+            $query->where('category_id', $this->selectedCategory);
+        }
+    
         $this->products = $query->get();
     }
-
+    
+    // Update resetSearch method
     public function resetSearch()
     {
         $this->search = '';
+        $this->selectedCategory = '';
         $this->performSearch();
     }
 
+    
     public function viewProductDetails($productId)
     {
         $product = Product::with('category')->find($productId);
