@@ -5,6 +5,7 @@ use App\Http\Middleware\CheckAdminConsultantStatus;
 use App\Livewire\ManageContent\ManageContent;
 use App\Livewire\ManageContent\ManagePromotion;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Livewire\Auth\SignIn;
 use App\Livewire\Auth\SignUp;
 use App\Livewire\Auth\WaitingApproval;
@@ -32,7 +33,10 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 require __DIR__ . '/auth.php';
-Route::post('/logout', Logout::class)->name('logout');
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/sign-in'); // Redirect to login after logout
+})->name('logout');
 //Sign-in route
 Route::get('/sign-in', SignIn::class)->name('sign-in');
 // Sign-up route

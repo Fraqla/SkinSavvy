@@ -46,11 +46,10 @@
             @endif
 
             {{-- Approval Table --}}
-            <div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gradient-to-r from-pink-50 to-purple-50 text-gray-700 uppercase text-xs font-semibold">
+                    <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Name
                                 </th>
