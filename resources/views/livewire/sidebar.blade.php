@@ -12,6 +12,7 @@
     <!-- Navigation Menu -->
     <ul class="mt-6 space-y-1 px-3">
         @can('manage content')
+        @if(auth()->user()->status === 'active')
         <li>
             <a href="{{ route('manage-content') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,9 +21,11 @@
                 Manage Content
             </a>
         </li>
+        @endif
         @endcan
 
         @can('waiting approval')
+        @if(auth()->user()->status === 'pending')
         <li>
             <a href="{{ route('waiting-approval') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,9 +35,13 @@
                 <span class="ml-auto bg-pink-600 text-white text-xs font-bold px-2 py-1 rounded-full">3</span>
             </a>
         </li>
+        @endif
         @endcan
 
+   
+
         @can('manage roles')
+        @if(auth()->user()->status === 'active')
         <li>
             <a href="{{ route('manage-roles') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -44,9 +51,11 @@
                 Manage Roles
             </a>
         </li>
+        @endif
         @endcan
 
         @can('admin approval')
+        @if(auth()->user()->status === 'active')
         <li>
             <a href="{{ route('admin-approval') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,9 +64,11 @@
                 Admin Consultant
             </a>
         </li>
+        @endif
         @endcan
 
         @can('manage product')
+        @if(auth()->user()->status === 'active')
         <li>
             <a href="{{ route('manage-product') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,9 +77,11 @@
                 Manage Products
             </a>
         </li>
+        @endif
         @endcan
 
         @can('manage category')
+        @if(auth()->user()->status === 'active')
         <li>
             <a href="{{ route('manage-category') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -77,9 +90,11 @@
                 Manage Categories
             </a>
         </li>
+        @endif
         @endcan
 
         @can('manage user')
+        @if(auth()->user()->status === 'active')
         <li>
             <a href="{{ route('manage-user') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-pink-700 hover:bg-opacity-50 transition-all duration-200 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-pink-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -88,6 +103,7 @@
                 Manage Users
             </a>
         </li>
+        @endif
         @endcan
     </ul>
 </div>

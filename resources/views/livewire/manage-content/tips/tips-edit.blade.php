@@ -1,49 +1,112 @@
-<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
-        <div class="p-6">
-            <h3 class="text-lg font-bold mb-4">Edit Tip</h3>
+<div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 my-8">
+        <!-- Modal Header -->
+        <div class="sticky top-0 bg-gradient-to-r from-pink-50 to-purple-50 px-6 py-4 border-b border-gray-200 z-10">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 rounded-lg bg-white shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Edit Skincare Tip</h3>
+                </div>
+                <button wire:click="hideEditForm" class="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition duration-150">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
 
+        <!-- Modal Content -->
+        <div class="p-6 space-y-6">
             <form wire:submit.prevent="save">
-                <div class="space-y-4">
-                    <div>
-                        <label for="editTitle" class="block text-sm font-medium text-gray-700">Title</label>
-                        <input type="text" wire:model="title" id="editTitle"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        @error('title') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label for="editImage" class="block text-sm font-medium text-gray-700">Image</label>
-                        <input type="file" wire:model="image" id="editImage"
-                            class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                        @error('image') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-
-                        @if($existingImage)
-                            <div class="mt-2">
-                                <span class="text-sm text-gray-500">Current Image:</span>
-                                <img src="{{ asset('storage/' . $existingImage) }}" class="h-20 w-20 object-cover mt-1">
-                                <button type="button" wire:click="$set('existingImage', null)"
-                                    class="mt-1 text-xs text-red-500 hover:text-red-700">
-                                    Remove Image
-                                </button>
+                <!-- Title Field -->
+                <div>
+                    <label for="editTitle" class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <div class="relative">
+                        <input type="text" wire:model="title" id="editTitle" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition duration-200 shadow-sm hover:shadow"
+                            placeholder="Enter tip title">
+                        @error('title')
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
                             </div>
-                        @endif
+                        @enderror
                     </div>
-
-                    <div>
-                        <label for="editDescription" class="block text-sm font-medium text-gray-700">Description</label>
-                        <input type="text" wire:model="description" id="editDescription"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                    </div>
+                    @error('title') 
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p> 
+                    @enderror
                 </div>
 
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button type="button" wire:click="hideEditForm"
-                        class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
+                <!-- Image Upload -->
+                <div>
+                    <label for="editImage" class="block text-sm font-medium text-gray-700 mb-2">Image</label>
+                    <div class="flex items-center space-x-4">
+                        <label class="flex-1 cursor-pointer">
+                            <div class="flex items-center justify-center px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="text-sm text-gray-600">Choose image</span>
+                                <input type="file" wire:model="image" id="editImage" class="hidden">
+                            </div>
+                        </label>
+                    </div>
+                    @error('image') 
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p> 
+                    @enderror
+
+                    @if($existingImage)
+                        <div class="mt-4 flex items-center space-x-4">
+                            <div class="relative group">
+                                <img src="{{ asset('storage/' . $existingImage) }}" class="h-24 w-24 object-cover rounded-lg shadow-sm border border-gray-200">
+                                <div class="absolute inset-0 bg-black/20 rounded-lg opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center">
+                                    <span class="text-white text-xs font-medium">Current Image</span>
+                                </div>
+                            </div>
+                            <button type="button" wire:click="$set('existingImage', null)"
+                                class="text-sm text-red-600 hover:text-red-800 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Remove
+                            </button>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Description Field -->
+                <div>
+                    <label for="editDescription" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <div class="relative">
+                        <textarea wire:model="description" id="editDescription" rows="4" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition duration-200 shadow-sm hover:shadow"
+                            placeholder="Enter detailed description"></textarea>
+                        @error('description')
+                            <div class="absolute top-3 right-3">
+                                <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        @enderror
+                    </div>
+                    @error('description') 
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p> 
+                    @enderror
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200/60">
+                    <button type="button" wire:click="hideEditForm" 
+                        class="px-6 py-2.5 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition duration-200 shadow-sm">
                         Cancel
                     </button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                    <button type="submit" 
+                    class="px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-200">
                         Save Changes
                     </button>
                 </div>

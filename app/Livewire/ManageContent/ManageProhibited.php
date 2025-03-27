@@ -143,4 +143,5 @@ public function hideForms()
         $this->effect = '';
         $this->productId = null;
     }
+    
 }

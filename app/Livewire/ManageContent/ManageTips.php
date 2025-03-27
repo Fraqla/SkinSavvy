@@ -4,58 +4,57 @@ namespace App\Livewire\ManageContent;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 use App\Models\Content\Tip;
 use Illuminate\Support\Facades\Storage;
 
 class ManageTips extends Component
 {
-    use WithFileUploads;
+    use WithPagination, WithFileUploads;
 
-    public $tips;
+    // Remove the $tips property since we'll use pagination directly in view
     public $title, $description = '', $image, $tipId, $existingImage;
     public $isAddFormVisible = false;
     public $isEditFormVisible = false;
     public $isDeleteFormVisible = false;
+    public $isDetailsModalVisible = false;
+public $currentTip = null;
+
 
     protected $rules = [
         'title' => 'required|string|max:255',
         'description' => 'required|string',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ];
-    // Add this to your Livewire component
-protected $listeners = ['description-updated' => 'updateDescription'];
 
-public function updateDescription($content)
-{
-    $this->description = $content;
-    $this->emit('description-updated', $this->description);
-}
+    protected $listeners = ['description-updated' => 'updateDescription'];
+
+    public function updateDescription($content)
+    {
+        $this->description = $content;
+        $this->emit('description-updated', $this->description);
+    }
 
     public function mount()
-{
-    $this->loadTips();
-    $this->resetVisibility();
-}
-
-private function resetVisibility()
-{
-    $this->isAddFormVisible = false;
-    $this->isEditFormVisible = false;
-    $this->isDeleteFormVisible = false;
-}
-
-
-    public function loadTips()
     {
-        $this->tips = Tip::latest()->get();
+        $this->resetVisibility();
+    }
+
+    private function resetVisibility()
+    {
+        $this->isAddFormVisible = false;
+        $this->isEditFormVisible = false;
+        $this->isDeleteFormVisible = false;
+        $this->isDetailsModalVisible = false;
     }
 
     public function render()
     {
-        return view('livewire.manage-content.tips.tips-list');
+        return view('livewire.manage-content.tips.tips-list', [
+            'tips' => Tip::latest()->paginate(10) // Pass paginated data directly to view
+        ]);
     }
 
-    // Show methods
     public function showAddForm()
     {
         $this->hideAddForm(); // Reset first
@@ -98,7 +97,11 @@ private function resetVisibility()
         $this->isDeleteFormVisible = false;
     }
 
-    // Action methods
+    public function showDetails($id)
+{
+    $this->currentTip = Tip::findOrFail($id);
+    $this->isDetailsModalVisible = true;
+}
     public function save()
     {
         $this->validate();

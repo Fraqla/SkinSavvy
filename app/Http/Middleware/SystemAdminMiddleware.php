@@ -19,7 +19,7 @@ class SystemAdminMiddleware
     {
         // Check if the user is authenticated
         if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Please log in to access this page.');
+            return redirect()->route('signin')->with('error', 'Please log in to access this page.');
         }
 
         // ✅ Correct way to check the 'system_admin' role using Spatie's `hasRole()`

@@ -68,7 +68,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/manage-user', ManageUsers::class)->name('manage-user');
     });
 
-    Route::middleware(['auth', 'can:waiting approval'])->group(function () {
+    Route::middleware(['auth'])->group(function () {
         Route::get('/waiting-approval', WaitingApproval::class)
             ->name('waiting-approval');
     });

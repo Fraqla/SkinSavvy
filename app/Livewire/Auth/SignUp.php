@@ -23,26 +23,27 @@ class SignUp extends Component
     ];
 
     public function register()
-    {
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
-        ]);
-    
-        // Ensure the role and status are assigned properly
-        $user = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => bcrypt($this->password),
-            'role' => 'admin_consultant', // Set role as admin consultant
-            'status' => 'pending', // Set status to pending
-        ]);
-    
-        session()->flash('success', 'Account created successfully! Please wait for admin approval.');
-    
-        return redirect()->route('sign-in');
-    }
+{
+    $this->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|min:6|confirmed',
+    ]);
+
+    $user = User::create([
+        'name' => $this->name,
+        'email' => $this->email,
+        'password' => bcrypt($this->password),
+        'status' => 'pending', // Set status to pending
+    ]);
+
+    // Properly assign the role using Laravel Permissions package
+    $user->assignRole('admin_consultant');
+
+    session()->flash('success', 'Account created successfully! Please wait for admin approval.');
+
+    return redirect()->route('sign-in');
+}
     
     
     

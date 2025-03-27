@@ -50,6 +50,8 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'system_admin' => \App\Http\Middleware\SystemAdminMiddleware::class,
+        'active.admin_consultant' => \App\Http\Middleware\EnsureAdminConsultantIsActive::class,
+
 
 
     ];
