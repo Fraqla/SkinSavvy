@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;  
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -46,4 +47,29 @@ class UserController extends Controller
 
         return $user;
     }
+
+    public function login(Request $request)
+{
+    // Validate input
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    // Attempt login
+    if (!Auth::attempt($credentials)) {
+        return response()->json([
+            'message' => 'Invalid email or password'
+        ], 401);
+    }
+
+    $user = Auth::user();
+    $token = $user->createToken('authToken')->plainTextToken;
+
+    return response()->json([
+        'message' => 'Login successful',
+        'user' => $user,
+        'token' => $token
+    ], 200);
+}
 }
