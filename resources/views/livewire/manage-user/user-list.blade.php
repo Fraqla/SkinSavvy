@@ -13,15 +13,26 @@
         </div>
 
         <!-- Role Filter -->
-        <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-            <label for="roleFilter" class="block text-sm font-medium text-gray-700 mb-2">Filter by Role</label>
-            <select wire:model="selectedRole" id="roleFilter">
-    @foreach($roles as $role)
-        <option value="{{ $role }}">{{ ucfirst($role) }}</option>
-    @endforeach
-</select>
-
+<div class="bg-white p-4 rounded-lg shadow-sm mb-6">
+    <label for="roleFilter" class="block text-sm font-medium text-gray-700 mb-2">Filter by Role</label>
+    
+    <div class="flex items-center space-x-4">
+        <!-- Role Dropdown -->
+        <div class="flex-1">
+            <select wire:model="selectedRole" id="roleFilter" class="block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                @foreach($roles as $role)
+                    <option value="{{ $role }}" class="text-sm">{{ ucfirst($role) }}</option>
+                @endforeach
+            </select>
         </div>
+
+        <!-- Search Button -->
+        <button wire:click="searchByRole" class="px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-200">
+            <span class="inline-block">Search</span>
+        </button>
+    </div>
+</div>
+
 
         <!-- User Table -->
         <div class="bg-white rounded-lg shadow-sm overflow-hidden">

@@ -26,6 +26,11 @@ class ManageUsers extends Component
         $this->resetPage();
     }
 
+    public function searchByRole()
+    {
+        $this->resetPage(); // Reset pagination when search is triggered
+    }
+
     public function render()
     {
         $users = User::query()
