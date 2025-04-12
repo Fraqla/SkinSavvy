@@ -46,7 +46,6 @@
                     </div>
                 </div>
 
-
                 <!-- Details Section -->
                 <div class="md:col-span-2 space-y-6">
                     <!-- Characteristics -->
@@ -59,7 +58,15 @@
                             </svg>
                             Key Characteristics
                         </h4>
-                        <p class="text-gray-600 whitespace-pre-line">{{ $skinKnowledge->characteristics }}</p>
+                        @if(is_array($skinKnowledge->characteristics))
+                            <ul class="list-disc pl-5 space-y-1">
+                                @foreach($skinKnowledge->characteristics as $item)
+                                    <li>{{ $item }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-gray-600">{{ $skinKnowledge->characteristics }}</p>
+                        @endif
                     </div>
 
                     <!-- Best Ingredients -->
@@ -72,7 +79,15 @@
                             </svg>
                             Recommended Ingredients
                         </h4>
-                        <p class="text-gray-600 whitespace-pre-line">{{ $skinKnowledge->best_ingredient }}</p>
+                        @if(is_array($skinKnowledge->best_ingredient))
+                            <ul class="list-disc pl-5 space-y-1">
+                                @foreach($skinKnowledge->best_ingredient as $item)
+                                    <li>{{ $item }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-gray-600">{{ $skinKnowledge->best_ingredient }}</p>
+                        @endif
                     </div>
 
                     <!-- Description -->

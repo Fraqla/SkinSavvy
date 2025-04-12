@@ -7,4 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Ingredient extends Model
 {
     protected $fillable = ['ingredient_name', 'facts', 'function', 'benefits', 'image'];
+
+    protected $casts = [
+        'facts' => 'array',
+        'benefits' => 'array',
+    ];
 }
+

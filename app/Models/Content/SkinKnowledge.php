@@ -19,4 +19,10 @@ class SkinKnowledge extends Model
         'description',
     ];
 
+    protected $casts = [
+        'characteristics' => 'array',
+        'best_ingredient' => 'array',
+    ];
+    
+
 }

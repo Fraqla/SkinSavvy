@@ -99,27 +99,27 @@
                         @enderror
                     </div>
                 </div>
+<!-- Image Upload -->
+<div>
+    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
+    <div class="flex items-center space-x-4">
+        <input type="file" wire:model="image" accept="image/*"
+            class="block w-full text-sm text-gray-500
+                   file:mr-4 file:py-2 file:px-4
+                   file:rounded-lg file:border-0
+                   file:text-sm file:font-semibold
+                   file:bg-purple-50 file:text-purple-700
+                   hover:file:bg-purple-100"/>
 
-                <!-- Image Upload -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Promotion Image</label>
-                    <div class="flex items-center justify-center w-full">
-                        <label class="flex flex-col w-full h-32 border-2 border-dashed border-gray-300 hover:border-gray-400 rounded-lg cursor-pointer transition duration-200 hover:bg-gray-50">
-                            <div class="flex flex-col items-center justify-center pt-7">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                <p class="pt-1 text-sm text-gray-500">
-                                    Click to upload an image (JPEG, PNG)
-                                </p>
-                            </div>
-                            <input type="file" wire:model="image" class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer">
-                        </label>
-                    </div>
-                    @error('image') 
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p> 
-                    @enderror
-                </div>
+        @if ($image)
+            <img src="{{ $image->temporaryUrl() }}" class="h-20 w-20 object-cover rounded-lg shadow-md" alt="Preview">
+        @endif
+    </div>
+    @error('image') 
+        <p class="mt-2 text-sm text-red-600">{{ $message }}</p> 
+    @enderror
+</div>
+
 
                 <!-- Modal Footer -->
                 <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200/60">

@@ -12,7 +12,7 @@ class ManageIngredient extends Component
 {
     use WithPagination, WithFileUploads;
 
-    public $ingredient_name, $function, $facts, $benefits, $image;
+    public $ingredient_name, $function, $facts = [], $benefits = [], $image;
     public $tempImage;
     public $ingredientId;
     public $isAddFormVisible = false;
@@ -20,12 +20,17 @@ class ManageIngredient extends Component
     public $isDeleteFormVisible = false;
     public $isDetailsModalVisible = false;
     public $selectedIngredient;
+    public $newFact = '';
+    public $newBenefit = '';
     protected $rules = [
         'ingredient_name' => 'required|string|max:255',
         'function' => 'required|string',
-        'facts' => 'nullable|string',
-        'benefits' => 'nullable|string',
+        'facts' => 'nullable|array',
+        'facts.*' => 'required|string|max:255',
+        'benefits' => 'nullable|array',
+        'benefits.*' => 'required|string|max:255',
         'image' => 'nullable|image|max:2048',
+    
     ];
     protected $listeners = ['closeModal' => 'closeDetailsModal'];
 
@@ -127,12 +132,44 @@ public function closeDetailsModal()
     $this->isDetailsModalVisible = false;
     $this->selectedIngredient = null;
 }
+
+public function addFact()
+{
+    $this->validate([
+        'newFact' => 'required|string|max:255'
+    ]);
+
+    $this->facts[] = $this->newFact;
+    $this->newFact = '';
+}
+
+public function removeFact($index)
+    {
+        unset($this->facts[$index]);
+        $this->facts = array_values($this->facts);
+    }
+
+    public function addBenefit()
+    {
+        $this->validate([
+            'newBenefit' => 'required|string|max:255'
+        ]);
+
+        $this->benefits[] = $this->newBenefit;
+        $this->newBenefit = '';
+    }
+
+    public function removeBenefit($index)
+    {
+        unset($this->benefits[$index]);
+        $this->benefits = array_values($this->benefits);
+    }
     private function resetInputFields()
     {
         $this->ingredient_name = '';
         $this->function = '';
-        $this->facts = '';
-        $this->benefits = '';
+        $this->facts = [];
+        $this->benefits = [];
         $this->image = null;
         $this->tempImage = null;
         $this->ingredientId = null;

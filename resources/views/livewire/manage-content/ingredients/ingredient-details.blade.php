@@ -60,19 +60,23 @@
                     </div>
 
                     <!-- Facts -->
-                    @if($ingredient->facts)
                     <div class="bg-white p-5 rounded-xl border border-gray-200/60 shadow-sm hover:shadow-md transition duration-200">
                         <h4 class="text-xl font-semibold text-gray-800 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                            </svg>
+                            </svg>  
                             Key Facts
                         </h4>
-                        <div class="mt-3 prose prose-indigo text-gray-600 max-w-none">
-                            {{ $ingredient->facts }}
-                        </div>
+                        @if(is_array($ingredient->facts))
+                            <ul class="list-disc pl-5 space-y-1">
+                                @foreach($ingredient->facts as $fact)
+                                    <li>{{ $fact}}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-gray-600">{{ $ingredient->facts }}</p>
+                        @endif
                     </div>
-                    @endif
 
                     <!-- Benefits -->
                     @if($ingredient->benefits)
@@ -83,9 +87,15 @@
                             </svg>
                             Skin Benefits
                         </h4>
-                        <div class="mt-3 prose prose-indigo text-gray-600 max-w-none">
-                            {{ $ingredient->benefits }}
-                        </div>
+                        @if(is_array($ingredient->benefits))
+                            <ul class="list-disc pl-5 space-y-1">
+                                @foreach($ingredient->benefits as $benefit)
+                                    <li>{{ $benefit}}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-gray-600">{{ $ingredient->benefits }}</p>
+                        @endif
                     </div>
                     @endif
                 </div>

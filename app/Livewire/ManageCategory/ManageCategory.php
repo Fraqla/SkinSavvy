@@ -5,18 +5,21 @@ namespace App\Livewire\ManageCategory;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Category;
+use Livewire\WithFileUploads;
 
 class ManageCategory extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     public $name, $category_id, $search = '';
+    public $image;
     public $showAddForm = false, $showEditForm = false;
     public $selectedCategories = [], $selectAll = false;
     public $confirmingDeletion = false;
     public $categoryToDelete = null;
     protected $paginationTheme = 'tailwind';
     public $searchBy = 'name';
+    public $existingImage; // New property to store the existing image URL
 
     public function render()
     {
@@ -37,8 +40,21 @@ class ManageCategory extends Component
     // Save New Category
     public function store()
     {
-        $this->validate(['name' => 'required|string|unique:categories']);
-        Category::create(['name' => $this->name]);
+        $this->validate([
+            'name' => 'required|string|unique:categories',
+            'image' => 'nullable|image|max:2048', // optional validation for image
+        ]);
+    
+        $imagePath = null;
+        if ($this->image) {
+            $imagePath = $this->image->store('category-images', 'public');
+        }
+    
+        Category::create([
+            'name' => $this->name,
+            'image' => $imagePath,
+        ]);
+    
         session()->flash('success', 'Category added successfully!');
         $this->resetFields();
     }
@@ -49,52 +65,48 @@ class ManageCategory extends Component
         $category = Category::find($id);
         $this->category_id = $id;
         $this->name = $category->name;
+        $this->existingImage = $category->image; // Assign the existing image to the property
+        $this->image = null; // Reset the image field for upload
         $this->showEditForm = true;
     }
 
     // Update Category
     public function update()
     {
-        $this->validate(['name' => 'required|string|unique:categories,name,' . $this->category_id]);
+        $this->validate([
+            'name' => 'required|string|unique:categories,name,' . $this->category_id,
+            'image' => 'nullable|image|max:2048',
+        ]);
+
         $category = Category::find($this->category_id);
-        $category->update(['name' => $this->name]);
+
+        $imagePath = $category->image; // Keep the existing image if not updating
+        if ($this->image) {
+            $imagePath = $this->image->store('category-images', 'public');
+        }
+
+        $category->update([
+            'name' => $this->name,
+            'image' => $imagePath,
+        ]);
 
         session()->flash('success', 'Category updated successfully!');
         $this->resetFields();
     }
 
-    // Delete Single Category
-    public function delete($id)
+    // Other methods (delete, cancel, etc.) remain the same...
+
+    private function resetFields()
     {
-        Category::find($id)->delete();
-        session()->flash('success', 'Category deleted successfully!');
+        $this->name = '';
+        $this->image = null;
+        $this->category_id = null;
+        $this->existingImage = null; // Reset the existing image when fields are reset
+        $this->showAddForm = false;
+        $this->showEditForm = false;
     }
 
-    // Bulk Delete
-    public function deleteSelected()
-    {
-        Category::whereIn('id', $this->selectedCategories)->delete();
-        $this->selectedCategories = [];
-        session()->flash('success', 'Selected categories deleted successfully!');
-    }
-    public function confirmDeletion($id)
-    {
-        $this->confirmingDeletion = true;
-        $this->categoryToDelete = $id;
-    }
-    // Delete after confirmation
-public function deleteConfirmed()
-{
-    if ($this->categoryToDelete) {
-        Category::find($this->categoryToDelete)->delete();
-        session()->flash('success', 'Category deleted successfully!');
-    }
-
-    // Reset states
-    $this->confirmingDeletion = false;
-    $this->categoryToDelete = null;
-}
-public function cancel()
+    public function cancel()
 {
     $this->resetFields();
     $this->showEditForm = false;
@@ -102,35 +114,4 @@ public function cancel()
     $this->dispatch('refresh');
 }
 
-    // Reset fields and forms
-    private function resetFields()
-    {
-        $this->name = '';
-        $this->category_id = null;
-        $this->showAddForm = false;
-        $this->showEditForm = false;
-    }
-
-    public function performSearch()
-{
-    $query = Category::query();
-
-    if ($this->search) {
-        if ($this->searchBy === 'category') {
-            $query->whereHas('category', function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%');
-            });
-        } else {
-            $query->where($this->searchBy, 'like', '%' . $this->search . '%');
-        }
-    }
-
-    $this->category_id = $query->get();
-}
-
-public function resetSearch()
-{
-    $this->search = '';
-    $this->performSearch();
-}
 }

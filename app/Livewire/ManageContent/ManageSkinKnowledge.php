@@ -12,7 +12,7 @@ class ManageSkinKnowledge extends Component
 {
     use WithPagination, WithFileUploads;
 
-    public $skin_type, $characteristics, $best_ingredient, $description, $image;
+    public $skin_type, $characteristics = [], $best_ingredient = [], $description, $image;
     public $tempImage;
     public $skinKnowledgeId;
     public $isAddFormVisible = false;
@@ -20,14 +20,19 @@ class ManageSkinKnowledge extends Component
     public $isDeleteFormVisible = false;
     public $isDetailsModalVisible = false;
     public $selectedSkinKnowledge;
+    public $newCharacteristic = '';
+    public $newIngredient = '';
 
     protected $rules = [
         'skin_type' => 'required|string|max:255',
-        'characteristics' => 'required|string',
-        'best_ingredient' => 'required|string',
+        'characteristics' => 'required|array|min:1',
+        'characteristics.*' => 'required|string|max:255',
+        'best_ingredient' => 'required|array|min:1',
+        'best_ingredient.*' => 'required|string|max:255',
         'description' => 'required|string',
         'image' => 'nullable|image|max:2048',
     ];
+
 
     public function render()
     {
@@ -49,7 +54,7 @@ class ManageSkinKnowledge extends Component
         $this->characteristics = $skinKnowledge->characteristics;
         $this->best_ingredient = $skinKnowledge->best_ingredient;
         $this->description = $skinKnowledge->description;
-        $this->tempImage = $skinKnowledge->image ? asset('storage/'.$skinKnowledge->image) : null;
+        $this->tempImage = $skinKnowledge->image ? asset('storage/' . $skinKnowledge->image) : null;
         $this->isEditFormVisible = true;
     }
 
@@ -98,8 +103,10 @@ class ManageSkinKnowledge extends Component
 
         SkinKnowledge::updateOrCreate(['id' => $this->skinKnowledgeId], $data);
 
-        session()->flash('message', 
-            $this->skinKnowledgeId ? 'Skin knowledge updated successfully.' : 'Skin knowledge created successfully.');
+        session()->flash(
+            'message',
+            $this->skinKnowledgeId ? 'Skin knowledge updated successfully.' : 'Skin knowledge created successfully.'
+        );
 
         $this->hideForms();
     }
@@ -123,11 +130,42 @@ class ManageSkinKnowledge extends Component
         $this->hideForms();
     }
 
+    public function addCharacteristic()
+    {
+        $this->validate([
+            'newCharacteristic' => 'required|string|max:255'
+        ]);
+
+        $this->characteristics[] = $this->newCharacteristic;
+        $this->newCharacteristic = '';
+    }
+
+    public function removeCharacteristic($index)
+    {
+        unset($this->characteristics[$index]);
+        $this->characteristics = array_values($this->characteristics);
+    }
+
+    public function addIngredient()
+    {
+        $this->validate([
+            'newIngredient' => 'required|string|max:255'
+        ]);
+
+        $this->best_ingredient[] = $this->newIngredient;
+        $this->newIngredient = '';
+    }
+
+    public function removeIngredient($index)
+    {
+        unset($this->best_ingredient[$index]);
+        $this->best_ingredient = array_values($this->best_ingredient);
+    }
     private function resetInputFields()
     {
         $this->skin_type = '';
-        $this->characteristics = '';
-        $this->best_ingredient = '';
+        $this->characteristics = [];
+        $this->best_ingredient = [];
         $this->description = '';
         $this->image = null;
         $this->tempImage = null;
