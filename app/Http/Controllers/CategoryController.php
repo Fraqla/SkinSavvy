@@ -7,15 +7,18 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     public function index()
-{
-    $categories = Category::all();
-
-    foreach ($categories as $category) {
-        $category->image_url = asset('storage/' . $category->image); // 'category-images/filename.jpg'
+    {
+        $categories = Category::all();
+    
+        foreach ($categories as $category) {
+            // Use the /category-image/ route to generate the image URL
+            $category->image_url = url('category-image/' . $category->image); // Use category-image route
+        }
+    
+        return response()->json($categories);
     }
-
-    return $categories;
-}
+    
+    
 
 
     public function show(Category $category) 

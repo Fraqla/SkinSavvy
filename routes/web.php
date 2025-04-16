@@ -25,7 +25,8 @@ use App\Livewire\ManageContent\ManageTips;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 
-Route::get('/image/{filename}', function ($filename) {
+// Route for category images
+Route::get('/category-image/{filename}', function ($filename) {
     $path = 'category-images/' . $filename;
 
     if (!Storage::disk('public')->exists($path)) {
@@ -37,9 +38,40 @@ Route::get('/image/{filename}', function ($filename) {
 
     return Response::make($file, 200)
         ->header('Content-Type', $type)
-        ->header('Access-Control-Allow-Origin', '*'); // 👈 Add this!
+        ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
 });
 
+// Route for tip images
+Route::get('/tip-image/{filename}', function ($filename) {
+    $path = 'tips/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return Response::make($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
+});
+
+// Route for product images
+Route::get('/product-image/{filename}', function ($filename) {
+    $path = 'products/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return Response::make($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
+});
 
 Route::get('/', function () {
     return redirect()->route('sign-in'); // Redirect to login page when accessing "/"
