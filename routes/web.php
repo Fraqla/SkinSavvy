@@ -22,6 +22,24 @@ use App\Livewire\ManageContent\ManageProhibited;
 use App\Livewire\ManageContent\ManageSkinKnowledge;
 use App\Livewire\ManageContent\ManageSkinQuiz;
 use App\Livewire\ManageContent\ManageTips;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
+
+Route::get('/image/{filename}', function ($filename) {
+    $path = 'category-images/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return Response::make($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*'); // 👈 Add this!
+});
+
 
 Route::get('/', function () {
     return redirect()->route('sign-in'); // Redirect to login page when accessing "/"
