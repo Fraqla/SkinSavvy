@@ -12,5 +12,6 @@ class Ingredient extends Model
         'facts' => 'array',
         'benefits' => 'array',
     ];
+    
 }
 

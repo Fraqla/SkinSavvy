@@ -73,6 +73,38 @@ Route::get('/product-image/{filename}', function ($filename) {
         ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
 });
 
+// Ingredient image route
+Route::get('/ingredient-image/{filename}', function ($filename) {
+    $path = 'ingredients/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return Response::make($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
+});
+
+// IPromotion image route
+Route::get('/promotion-image/{filename}', function ($filename) {
+    $path = 'promotions/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return Response::make($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
+});
+
 Route::get('/', function () {
     return redirect()->route('sign-in'); // Redirect to login page when accessing "/"
 });
@@ -93,7 +125,7 @@ Route::get('/sign-in', SignIn::class)->name('sign-in');
 Route::get('/sign-up', SignUp::class)->name('sign-up');
 Route::get('/dashboard', Dashboard::class)->name('dashboard')->middleware('auth');
 Route::middleware(['auth'])->group(function () {
-    Route::get('/manage-promotion', PromotionNewsList::class)->name('manage-promotion');
+
 
     Route::middleware(['auth', 'can:manage content'])->group(function () {
         Route::get('/manage-content', ManageContent::class)->name('manage-content');
