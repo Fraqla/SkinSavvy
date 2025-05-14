@@ -17,4 +17,5 @@ class SkinQuiz extends Model
     protected $casts = [
         'answers' => 'array',
     ];
+    
 }
