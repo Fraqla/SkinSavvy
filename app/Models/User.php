@@ -61,5 +61,8 @@ public function userRole()
         ->via('model_has_roles', 'model_id');
 }
 
+public function wishlist() {
+        return $this->belongsTo(Wishlist::class);
+    }
 
 }

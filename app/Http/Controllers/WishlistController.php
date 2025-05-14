@@ -3,43 +3,54 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\WishlistItem;
+use App\Models\Wishlist;
 
 class WishlistController extends Controller
 {
-    // Fetch all wishlist items for authenticated user
     public function index(Request $request)
     {
-        // Assuming you have a relationship with User and WishlistItem
-        $user = $request->user(); // Get the authenticated user
-        $wishlist = $user->wishlistItems; // Access wishlist items through a relationship
+        $user = $request->user();
+
+        $wishlist = Wishlist::with('product')
+            ->where('user_id', $user->id)
+            ->get();
 
         return response()->json($wishlist);
     }
 
-    // Add an item to the wishlist
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'product_id' => 'required|exists:products,id', // Validate that the product exists
-        ]);
-
         $user = $request->user();
-        $wishlistItem = $user->wishlistItems()->create([
-            'product_id' => $validated['product_id'],
+        $productId = $request->input('product_id');
+
+        $exists = Wishlist::where('user_id', $user->id)
+            ->where('product_id', $productId)
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['message' => 'Already in wishlist'], 409);
+        }
+
+        $wishlist = Wishlist::create([
+            'user_id' => $user->id,
+            'product_id' => $productId,
         ]);
 
-        return response()->json($wishlistItem, 201); // Return the created wishlist item
+        return response()->json($wishlist, 201);
     }
 
-    // Remove an item from the wishlist
-    public function destroy($id, Request $request)
+    public function destroy(Request $request, $product_id)
     {
         $user = $request->user();
-        $wishlistItem = $user->wishlistItems()->findOrFail($id);
 
-        $wishlistItem->delete();
+        $deleted = Wishlist::where('user_id', $user->id)
+            ->where('product_id', $product_id)
+            ->delete();
 
-        return response()->json(null, 204); // No content, just indicate successful deletion
+        if ($deleted) {
+            return response()->json(['message' => 'Removed from wishlist']);
+        } else {
+            return response()->json(['message' => 'Item not found'], 404);
+        }
     }
 }

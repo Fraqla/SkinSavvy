@@ -29,13 +29,12 @@ Route::get('/ingredients', [IngredientController::class, 'index']);
 Route::get('/skin-quizzes', [SkinQuizController::class, 'index']);
 Route::post('/submit-skin-quiz', [SkinQuizController::class, 'submit']);
 // Fetch user's wishlist
-Route::get('/wishlist', [WishlistController::class, 'index'])->middleware('auth:api');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/wishlist', [WishlistController::class, 'store']);
+    Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy']);
+    Route::get('/wishlist', [WishlistController::class, 'index']);
+});
 
-// Add product to wishlist
-Route::post('/wishlist', [WishlistController::class, 'store'])->middleware('auth:api');
-
-// Remove product from wishlist
-Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy'])->middleware('auth:api');
 
 // Allow CORS for the specific route
 Route::post('/submit-skin-quiz', function () {
