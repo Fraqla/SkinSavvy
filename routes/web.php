@@ -105,6 +105,38 @@ Route::get('/promotion-image/{filename}', function ($filename) {
         ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
 });
 
+// Review image route
+Route::get('/review-image/{filename}', function ($filename) {
+    $path = 'reviews/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return Response::make($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
+});
+
+// Skin Knowledge image route
+Route::get('/knowledge-image/{filename}', function ($filename) {
+    $path = 'skin-knowledge/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return Response::make($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
+});
+
 Route::get('/', function () {
     return redirect()->route('sign-in'); // Redirect to login page when accessing "/"
 });

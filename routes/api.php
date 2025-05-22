@@ -11,6 +11,7 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\SkinQuizController;
 use App\Http\Controllers\SkinKnowledgeController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\ReviewController;
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API is working!']);
@@ -33,7 +34,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wishlist', [WishlistController::class, 'store']);
     Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy']);
     Route::get('/wishlist', [WishlistController::class, 'index']);
+    
 });
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/reviews', [ReviewController::class, 'store']);
+});
+
+Route::get('/reviews/{productId}', [ReviewController::class, 'index']);
+
 
 
 // Allow CORS for the specific route
