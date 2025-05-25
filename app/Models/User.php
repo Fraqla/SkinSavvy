@@ -65,4 +65,9 @@ public function wishlist() {
         return $this->belongsTo(Wishlist::class);
     }
 
+    public function allergies()
+{
+    return $this->hasMany(UserAllergy::class);
+}
+
 }

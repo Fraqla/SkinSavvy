@@ -12,6 +12,7 @@ use App\Http\Controllers\SkinQuizController;
 use App\Http\Controllers\SkinKnowledgeController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\UserAllergyController;
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API is working!']);
@@ -42,6 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/reviews/{productId}', [ReviewController::class, 'index']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user-allergies', [UserAllergyController::class, 'index']);
+    Route::post('/user-allergies', [UserAllergyController::class, 'store']);
+    Route::delete('/user-allergies/{ingredient}', [UserAllergyController::class, 'destroy']);
+});
 
 
 // Allow CORS for the specific route
