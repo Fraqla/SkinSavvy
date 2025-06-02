@@ -72,4 +72,60 @@ class UserController extends Controller
         'token' => $token
     ], 200);
 }
+
+// public function getProfile(Request $request)
+// {
+//     $user = $request->user()->load('skinType');
+    
+//     // Debug: Check what's being loaded
+//     \Log::info('User with skin type:', ['user' => $user, 'skinType' => $user->skinType]);
+    
+//     return response()->json([
+//     'user' => $user,
+//     'skinType_direct' => $user->skinType, // for debugging
+// ]);
+
+// }
+
+public function getProfile(Request $request)
+{
+    $user = $request->user()->load('skinType');
+    \Log::info('User profile with skinType:', ['user' => $user->toArray()]);
+
+    return response()->json([
+        'user' => $user,
+        'skinType' => $user->skinType // Explicitly include skinType
+    ]);
+}
+
+public function updateProfile(Request $request)
+{
+    $user = $request->user();
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'skin_type' => 'sometimes|array',
+        'skin_type.skin_type' => 'sometimes|string',
+        'skin_type.total_score' => 'sometimes|integer',
+    ]);
+
+    $user->update([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+    ]);
+
+    // Update or create skin type
+    if (isset($validated['skin_type'])) {
+        $user->skinType()->updateOrCreate(
+            ['user_id' => $user->id],
+            $validated['skin_type']
+        );
+    }
+
+    return response()->json([
+        'user' => $user->fresh()->load('skinType'),
+    ]);
+}
+
 }
