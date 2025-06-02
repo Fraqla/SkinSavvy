@@ -29,7 +29,8 @@ Route::get('/prohibited-products', [ProhibitedProductController::class, 'index']
 Route::get('/promotions', [PromotionController::class, 'index']);
 Route::get('/ingredients', [IngredientController::class, 'index']);
 Route::get('/skin-quizzes', [SkinQuizController::class, 'index']);
-Route::post('/submit-skin-quiz', [SkinQuizController::class, 'submit']);
+Route::middleware('auth:sanctum')->post('/skin-quizzes/submit', [SkinQuizController::class, 'submit']);
+
 // Fetch user's wishlist
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wishlist', [WishlistController::class, 'store']);
@@ -50,12 +51,3 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-// Allow CORS for the specific route
-Route::post('/submit-skin-quiz', function () {
-    // Handle your quiz submission logic here
-    // Example response for the submitted skin quiz
-    return response()->json(['message' => 'Skin quiz submitted successfully!'], 200)
-        ->header('Access-Control-Allow-Origin', '*')  // Allow all origins (you can specify a domain here)
-        ->header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')  // Allowed HTTP methods
-        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');  // Allowed headers
-});

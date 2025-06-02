@@ -13,16 +13,17 @@ class UserSkinQuizAnswer extends Model
         'user_id',
         'skin_quiz_id',
         'user_answer',
+        'score',
     ];
 
     // Relationships
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 
     public function quiz()
     {
-        return $this->belongsTo(SkinQuiz::class, 'quiz_id');
+        return $this->belongsTo(SkinQuiz::class, 'skin_quiz_id');
     }
 }
