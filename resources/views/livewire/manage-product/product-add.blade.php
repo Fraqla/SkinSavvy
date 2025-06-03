@@ -48,6 +48,30 @@
                     </select>
                 </div>
 
+                <!-- Brand -->
+                <div>
+                    <label for="brand" class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+                    <input type="text" wire:model="brand" id="brand" placeholder="e.g. Neutrogena"
+                        class="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200 text-sm md:text-base" />
+                    @error('brand') <span class="text-xs md:text-sm text-red-600">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Suitability -->
+                <div>
+                    <label for="suitability" class="block text-sm font-medium text-gray-700 mb-1">Suitability</label>
+                    <select wire:model="selectedSkinType" id="suitability"
+                        class="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200 text-sm md:text-base"
+                        required>
+                        <option value="">Select Skin Type</option>
+                        @foreach($skinKnowledges as $skinType)
+                            <option value="{{ $skinType }}">{{ $skinType }}</option>
+                        @endforeach
+                    </select>
+                    @error('suitability') <span class="text-xs md:text-sm text-red-600">{{ $message }}</span> @enderror
+                </div>
+
+
+
                 <!-- Key Ingredient -->
                 <div>
                     <label for="ingredient" class="block text-sm font-medium text-gray-700 mb-1">Key Ingredient</label>

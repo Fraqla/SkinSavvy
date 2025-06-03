@@ -13,6 +13,7 @@ use App\Http\Controllers\SkinKnowledgeController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserAllergyController;
+use App\Http\Controllers\DialogflowController;
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API is working!']);
@@ -32,6 +33,7 @@ Route::get('/promotions', [PromotionController::class, 'index']);
 Route::get('/ingredients', [IngredientController::class, 'index']);
 Route::get('/skin-quizzes', [SkinQuizController::class, 'index']);
 Route::middleware('auth:sanctum')->post('/skin-quizzes/submit', [SkinQuizController::class, 'submit']);
+Route::post('/dialogflow-webhook', [DialogflowController::class, 'handleWebhook']);
 
 // Fetch user's wishlist
 Route::middleware('auth:sanctum')->group(function () {

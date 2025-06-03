@@ -73,29 +73,11 @@ class UserController extends Controller
     ], 200);
 }
 
-// public function getProfile(Request $request)
-// {
-//     $user = $request->user()->load('skinType');
-    
-//     // Debug: Check what's being loaded
-//     \Log::info('User with skin type:', ['user' => $user, 'skinType' => $user->skinType]);
-    
-//     return response()->json([
-//     'user' => $user,
-//     'skinType_direct' => $user->skinType, // for debugging
-// ]);
-
-// }
-
 public function getProfile(Request $request)
 {
-    $user = $request->user()->load('skinType');
-    \Log::info('User profile with skinType:', ['user' => $user->toArray()]);
-
-    return response()->json([
-        'user' => $user,
-        'skinType' => $user->skinType // Explicitly include skinType
-    ]);
+    $user = $request->user()->load('userSkinType');
+    \Log::info('User with skin type:', ['user' => $user->toArray()]);
+    return response()->json(['user' => $user]);
 }
 
 public function updateProfile(Request $request)

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\UserSkinType;
 
 
 class User extends Authenticatable
@@ -71,10 +72,11 @@ public function wishlist() {
     return $this->hasMany(UserAllergy::class);
 }
 
-public function skinType()
+public function userSkinType()
 {
     return $this->hasOne(UserSkinType::class);
 }
+
 
 
 
