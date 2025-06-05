@@ -44,17 +44,17 @@ class ManageCategory extends Component
             'name' => 'required|string|unique:categories',
             'image' => 'nullable|image|max:2048', // optional validation for image
         ]);
-    
+
         $imagePath = null;
         if ($this->image) {
             $imagePath = $this->image->store('category-images', 'public');
         }
-    
+
         Category::create([
             'name' => $this->name,
             'image' => $imagePath,
         ]);
-    
+
         session()->flash('success', 'Category added successfully!');
         $this->resetFields();
     }
@@ -94,7 +94,30 @@ class ManageCategory extends Component
         $this->resetFields();
     }
 
-    // Other methods (delete, cancel, etc.) remain the same...
+    // Confirm deletion
+    public function confirmDeletion($id)
+    {
+        $this->categoryToDelete = $id;
+        $this->confirmingDeletion = true;
+    }
+
+    // Execute deletion
+    public function delete()
+    {
+        if ($this->categoryToDelete) {
+            Category::find($this->categoryToDelete)->delete();
+            session()->flash('success', 'Category deleted successfully!');
+            $this->confirmingDeletion = false;
+            $this->categoryToDelete = null;
+        }
+    }
+
+    // Cancel deletion
+    public function cancelDeletion()
+    {
+        $this->confirmingDeletion = false;
+        $this->categoryToDelete = null;
+    }
 
     private function resetFields()
     {
@@ -107,11 +130,11 @@ class ManageCategory extends Component
     }
 
     public function cancel()
-{
-    $this->resetFields();
-    $this->showEditForm = false;
-    $this->showAddForm = false;
-    $this->dispatch('refresh');
-}
+    {
+        $this->resetFields();
+        $this->showEditForm = false;
+        $this->showAddForm = false;
+        $this->dispatch('refresh');
+    }
 
 }
