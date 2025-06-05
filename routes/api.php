@@ -33,7 +33,8 @@ Route::get('/promotions', [PromotionController::class, 'index']);
 Route::get('/ingredients', [IngredientController::class, 'index']);
 Route::get('/skin-quizzes', [SkinQuizController::class, 'index']);
 Route::middleware('auth:sanctum')->post('/skin-quizzes/submit', [SkinQuizController::class, 'submit']);
-Route::post('/dialogflow-webhook', [DialogflowController::class, 'handleWebhook']);
+Route::post('/dialogflow-webhook', [DialogflowController::class, 'handle']);
+Route::post('/dialogflow-send-message', [DialogflowController::class, 'sendMessage']);
 
 // Fetch user's wishlist
 Route::middleware('auth:sanctum')->group(function () {

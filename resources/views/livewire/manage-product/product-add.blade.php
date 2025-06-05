@@ -82,25 +82,51 @@
                 <!-- Image Upload -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+
+                    <!-- Show preview if image is selected -->
+                    @if($image)
+                        <div class="mb-4">
+                            <img src="{{ $image->temporaryUrl() }}"
+                                class="h-32 w-32 object-cover rounded-lg border border-gray-200">
+                        </div>
+                    @endif
+
                     <div class="flex items-center justify-center w-full">
                         <label for="image"
                             class="flex flex-col items-center justify-center w-full h-28 md:h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-200">
                             <div class="flex flex-col items-center justify-center pt-4 pb-5 md:pt-5 md:pb-6 px-2">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="h-6 w-6 md:h-8 md:w-8 text-gray-400 mb-1 md:mb-2" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <p class="mb-1 text-xs md:text-sm text-gray-500 text-center">
-                                    <span class="font-semibold">Click to upload</span> or drag and drop
-                                </p>
-                                <p class="text-[10px] md:text-xs text-gray-500">PNG, JPG (MAX. 5MB)</p>
+                                @if(!$image)
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-6 w-6 md:h-8 md:w-8 text-gray-400 mb-1 md:mb-2" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="mb-1 text-xs md:text-sm text-gray-500 text-center">
+                                        <span class="font-semibold">Click to upload</span> or drag and drop
+                                    </p>
+                                    <p class="text-[10px] md:text-xs text-gray-500">PNG, JPG (MAX. 5MB)</p>
+                                @else
+                                    <p class="text-sm text-gray-700">Change image</p>
+                                @endif
                             </div>
-                            <input id="image" type="file" wire:model="image" class="hidden" />
+                            <input id="image" type="file" wire:model="image" class="hidden" accept="image/*" />
                         </label>
                     </div>
                     @error('image') <span class="text-xs md:text-sm text-red-600">{{ $message }}</span> @enderror
+
+                    <!-- Remove button when image is selected -->
+                    @if($image)
+                        <button type="button" wire:click="$set('image', null)"
+                            class="mt-2 text-xs text-red-600 hover:text-red-800 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Remove image
+                        </button>
+                    @endif
                 </div>
 
                 <!-- Description -->

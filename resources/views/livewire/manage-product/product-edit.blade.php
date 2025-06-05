@@ -56,7 +56,7 @@
                 <!-- Suitability -->
                 <div>
                     <label for="suitability" class="block text-sm font-medium text-gray-700 mb-1">Suitability</label>
-                    <input type="text" wire:model="suitability" id="suitability"
+                    <input type="text" wire:model="selectedSkinType" id="suitability"
                         placeholder="e.g. Dry, Oily, Sensitive skin"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200" />
                 </div>

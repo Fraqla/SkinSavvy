@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'dialogflow' => [
+        'project_id' => env('skinsavvy-assistant-mgph'),
+        'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+    ],
 ];

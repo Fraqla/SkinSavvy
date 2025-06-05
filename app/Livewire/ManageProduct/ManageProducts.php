@@ -4,15 +4,26 @@ namespace App\Livewire\ManageProduct;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Content\SkinKnowledge;
 
 class ManageProducts extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithPagination;
 
-    public $products, $categories, $name, $category_id, $description, $image, $productId, $ingredient, $existingImage, $positiveAspects = [], $negativeAspects = [], $brand;
+    public $categories;
+    public $name;
+    public $category_id;
+    public $description;
+    public $image;
+    public $productId;
+    public $ingredient;
+    public $existingImage;
+    public $positiveAspects = [];
+    public $negativeAspects = [];
+    public $brand;
     public $showAddForm = false;
     public $showEditForm = false;
     public $confirmingProductDeletion = false;
@@ -29,36 +40,71 @@ class ManageProducts extends Component
     public $editingPositiveIndex = null;
     public $editingNegativeIndex = null;
     public $skinKnowledges = [];
-    public $selectedSkinType = null; // <-- bind this to the selected skin_type for suitability
+    public $selectedSkinType = null;
+    public $perPage = 10;
+    public $enableAutoSearch = false;
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'searchBy' => ['except' => 'name'],
+        'selectedCategory' => ['except' => ''],
+        'perPage' => ['except' => 10],
+    ];
 
     public function mount()
     {
-        $this->products = Product::all();
         $this->categories = Category::all();
-        $this->skinKnowledges = SkinKnowledge::pluck('skin_type'); // Get list of skin types for dropdown
+        $this->skinKnowledges = SkinKnowledge::pluck('skin_type');
     }
+
+    public function loadProducts()
+    {
+        return Product::with('category')
+            ->when($this->search, function ($query) {
+                if ($this->searchBy === 'category') {
+                    $query->whereHas('category', function ($q) {
+                        $q->where('name', 'like', '%' . $this->search . '%');
+                    });
+                } elseif ($this->searchBy === 'suitability') {
+                    $query->where('suitability', 'like', '%' . $this->search . '%');
+                } else {
+                    $query->where($this->searchBy, 'like', '%' . $this->search . '%');
+                }
+            })
+            ->when($this->selectedCategory, function ($query) {
+                $query->where('category_id', $this->selectedCategory);
+            })
+            ->paginate($this->perPage);
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
+
 
     public function resetFields()
     {
-        $this->name = '';
-        $this->category_id = '';
-        $this->description = '';
-        $this->image = null;
-        $this->ingredient = '';
-        $this->positiveAspects = [];
-        $this->negativeAspects = [];
-        $this->showAddForm = false;
-        $this->showEditForm = false;
-        $this->editedPositiveAspect = '';
-        $this->editedNegativeAspect = '';
-        $this->editingPositiveIndex = null;
-        $this->editingNegativeIndex = null;
-        $this->brand = '';
-        $this->selectedSkinType = null; // reset suitability selection
-        $this->existingImage = null;
+        $this->reset([
+            'name',
+            'category_id',
+            'description',
+            'image',
+            'ingredient',
+            'positiveAspects',
+            'negativeAspects',
+            'showAddForm',
+            'showEditForm',
+            'editedPositiveAspect',
+            'editedNegativeAspect',
+            'editingPositiveIndex',
+            'editingNegativeIndex',
+            'brand',
+            'selectedSkinType',
+            'existingImage'
+        ]);
     }
 
-    // Store product with selected skin_type as suitability
     public function store()
     {
         $this->validate([
@@ -70,7 +116,7 @@ class ManageProducts extends Component
             'positiveAspects' => 'required|array',
             'negativeAspects' => 'required|array',
             'brand' => 'nullable|string',
-            'selectedSkinType' => 'required|string|in:' . implode(',', $this->skinKnowledges->toArray()), // ensure valid skin type
+            'selectedSkinType' => 'required|string|in:' . implode(',', $this->skinKnowledges->toArray()),
         ]);
 
         $imagePath = $this->image ? $this->image->store('products', 'public') : null;
@@ -84,12 +130,11 @@ class ManageProducts extends Component
             'positive' => json_encode($this->positiveAspects),
             'negative' => json_encode($this->negativeAspects),
             'brand' => $this->brand,
-            'suitability' => $this->selectedSkinType, // store the skin_type here
+            'suitability' => $this->selectedSkinType,
         ]);
 
         session()->flash('success', 'Product added successfully!');
         $this->resetFields();
-        $this->mount();
     }
 
     public function showEditProductForm($id)
@@ -105,7 +150,7 @@ class ManageProducts extends Component
         $this->existingImage = $product->image;
         $this->showEditForm = true;
         $this->brand = $product->brand;
-        $this->selectedSkinType = $product->suitability; // prefill selected skin type
+        $this->selectedSkinType = $product->suitability;
     }
 
     public function update()
@@ -140,112 +185,80 @@ class ManageProducts extends Component
 
         session()->flash('success', 'Product updated successfully!');
         $this->resetFields();
-        $this->mount();
     }
 
-    // Edit Positive Aspect
     public function editPositiveAspect($index)
     {
         $this->editedPositiveAspect = $this->positiveAspects[$index];
         $this->editingPositiveIndex = $index;
     }
 
-    // Save Edited Positive Aspect
     public function savePositiveAspect()
     {
         if (!empty($this->editedPositiveAspect)) {
             $this->positiveAspects[$this->editingPositiveIndex] = $this->editedPositiveAspect;
-            $this->editedPositiveAspect = '';  // Reset the edited positive aspect
-            $this->editingPositiveIndex = null; // Reset editing index
+            $this->editedPositiveAspect = '';
+            $this->editingPositiveIndex = null;
         } else {
             $this->addError('editedPositiveAspect', 'Please enter a valid positive aspect.');
         }
     }
 
-    // Edit Negative Aspect
     public function editNegativeAspect($index)
     {
         $this->editedNegativeAspect = $this->negativeAspects[$index];
         $this->editingNegativeIndex = $index;
     }
 
-    // Save Edited Negative Aspect
     public function saveNegativeAspect()
     {
         if (!empty($this->editedNegativeAspect)) {
             $this->negativeAspects[$this->editingNegativeIndex] = $this->editedNegativeAspect;
-            $this->editedNegativeAspect = '';  // Reset the edited negative aspect
-            $this->editingNegativeIndex = null; // Reset editing index
+            $this->editedNegativeAspect = '';
+            $this->editingNegativeIndex = null;
         } else {
             $this->addError('editedNegativeAspect', 'Please enter a valid negative aspect.');
         }
     }
 
-    // Delete Product
     public function confirmDeletion($id)
     {
         $this->productIdToDelete = $id;
         $this->confirmingProductDeletion = true;
-        $this->dispatch('refresh'); // Force refresh!
     }
-
 
     public function deleteProduct()
     {
         if ($this->productIdToDelete) {
             Product::destroy($this->productIdToDelete);
-
             session()->flash('success', 'Product deleted successfully!');
             $this->reset(['confirmingProductDeletion', 'productIdToDelete']);
-            $this->mount();  // Refresh products
         }
     }
 
     public function cancel()
     {
         $this->resetFields();
-        $this->showEditForm = false;
-        $this->showAddForm = false;
-        $this->dispatch('refresh');
     }
 
     public function performSearch()
     {
-        $query = Product::query();
-
-        if ($this->search) {
-            if ($this->searchBy === 'category') {
-                $query->whereHas('category', function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%');
-                });
-            } else {
-                $query->where($this->searchBy, 'like', '%' . $this->search . '%');
-            }
-        }
-
-        // Add category filter
-        if ($this->selectedCategory) {
-            $query->where('category_id', $this->selectedCategory);
-        }
-
-        $this->products = $query->get();
+        $this->resetPage();
     }
 
-    // Update resetSearch method
     public function resetSearch()
     {
-        $this->search = '';
-        $this->selectedCategory = '';
-        $this->performSearch();
+        $this->reset([
+            'search',
+            'selectedCategory',
+            'searchBy',
+        ]);
+        $this->resetPage();
     }
-
 
     public function viewProductDetails($productId)
     {
         $product = Product::with('category')->find($productId);
-
-        $positiveAspects = json_decode($product->positive, true) ?? [];
-        $negativeAspects = json_decode($product->negative, true) ?? [];
 
         $this->productDetails = [
             'name' => $product->name,
@@ -253,8 +266,8 @@ class ManageProducts extends Component
             'ingredient' => $product->ingredient,
             'description' => $product->description,
             'image' => $product->image,
-            'positive' => $positiveAspects,
-            'negative' => $negativeAspects,
+            'positive' => json_decode($product->positive, true) ?? [],
+            'negative' => json_decode($product->negative, true) ?? [],
             'brand' => $product->brand,
             'suitability' => $product->suitability,
         ];
@@ -262,73 +275,49 @@ class ManageProducts extends Component
         $this->showProductDetails = true;
     }
 
-
-
-    // Add a new positive aspect
     public function addPositiveAspect()
     {
         if (!empty($this->newPositiveAspect)) {
             $this->positiveAspects[] = $this->newPositiveAspect;
-            $this->newPositiveAspect = '';  // Reset the input field
+            $this->newPositiveAspect = '';
         } else {
             $this->addError('newPositiveAspect', 'Please enter a positive aspect.');
         }
     }
 
-    // Remove a positive aspect
     public function removePositiveAspect($index)
     {
         unset($this->positiveAspects[$index]);
-        $this->positiveAspects = array_values($this->positiveAspects); // Re-index the array
+        $this->positiveAspects = array_values($this->positiveAspects);
     }
 
-    // Add a new negative aspect
     public function addNegativeAspect()
     {
         if (!empty($this->newNegativeAspect)) {
             $this->negativeAspects[] = $this->newNegativeAspect;
-            $this->newNegativeAspect = '';  // Reset the input field
+            $this->newNegativeAspect = '';
         } else {
             $this->addError('newNegativeAspect', 'Please enter a negative aspect.');
         }
     }
 
-    // Remove a negative aspect
     public function removeNegativeAspect($index)
     {
         unset($this->negativeAspects[$index]);
-        $this->negativeAspects = array_values($this->negativeAspects); // Re-index the array
-    }
-
-    public function updatePositiveAspect()
-    {
-        // Example: Update the positive aspects list in the database or session
-        $this->positiveAspects[] = $this->editedPositiveAspect;
-        $this->editedPositiveAspect = ''; // Reset the input field
-    }
-
-    public function updateNegativeAspect()
-    {
-        // Example: Update the negative aspects list in the database or session
-        $this->negativeAspects[] = $this->editedNegativeAspect;
-        $this->editedNegativeAspect = ''; // Reset the input field
+        $this->negativeAspects = array_values($this->negativeAspects);
     }
 
     public function showAddProductForm()
     {
         $this->resetFields();
         $this->showAddForm = true;
-        $this->showEditForm = false;
     }
-
 
     public function render()
     {
         return view('livewire.manage-product.product-list', [
-            'products' => Product::all(),
+            'products' => $this->loadProducts(),
             'skinKnowledges' => $this->skinKnowledges,
         ]);
     }
-
-
 }
