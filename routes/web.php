@@ -89,6 +89,22 @@ Route::get('/ingredient-image/{filename}', function ($filename) {
         ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
 });
 
+// prohibited product image route
+Route::get('/prohibited-products/{filename}', function ($filename) {
+    $path = 'prohibited-products/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return Response::make($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*'); 
+});
+
 // IPromotion image route
 Route::get('/promotion-image/{filename}', function ($filename) {
     $path = 'promotions/' . $filename;
@@ -136,6 +152,10 @@ Route::get('/knowledge-image/{filename}', function ($filename) {
         ->header('Content-Type', $type)
         ->header('Access-Control-Allow-Origin', '*'); // Allow CORS
 });
+
+
+
+
 
 Route::get('/', function () {
     return redirect()->route('sign-in'); // Redirect to login page when accessing "/"

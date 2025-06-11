@@ -29,6 +29,7 @@ Route::get('/products', [ProductController::class, 'getProductsByCategory']);
 Route::get('/tips', [TipsController::class, 'index']);
 Route::get('/skin-knowledge', [SkinKnowledgeController::class, 'index']);
 Route::get('/prohibited-products', [ProhibitedProductController::class, 'index']);
+Route::get('prohibited-products/{id}', [ProhibitedProductController::class, 'show']);
 Route::get('/promotions', [PromotionController::class, 'index']);
 Route::get('/ingredients', [IngredientController::class, 'index']);
 Route::get('/skin-quizzes', [SkinQuizController::class, 'index']);
