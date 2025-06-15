@@ -57,6 +57,7 @@ class ManageCategory extends Component
 
         session()->flash('success', 'Category added successfully!');
         $this->resetFields();
+        $this->showAddForm = false;
     }
 
     // Show Edit Form

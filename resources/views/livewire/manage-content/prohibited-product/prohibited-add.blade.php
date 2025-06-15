@@ -96,10 +96,10 @@
                 </div>
 
                 <!-- Product Image -->
-                <div>
+                <div class="relative"> <!-- Added relative container -->
                     <label class="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
                     <div class="flex items-center justify-center w-full">
-                        <label
+                        <label for="image-upload-{{ $productId ?? 'new' }}"
                             class="flex flex-col w-full h-32 border-2 border-dashed border-gray-300 hover:border-gray-400 rounded-lg cursor-pointer transition duration-200 hover:bg-gray-50">
                             <div class="flex flex-col items-center justify-center pt-7">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none"
@@ -111,8 +111,9 @@
                                     Click to upload an image (JPEG, PNG)
                                 </p>
                             </div>
-                            <input type="file" wire:model="image"
-                                class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer">
+                            <input id="image-upload-{{ $productId ?? 'new' }}" type="file" wire:model="image"
+                                class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer"
+                                style="z-index: 1;"> <!-- Added z-index -->
                         </label>
                     </div>
                     @error('image')

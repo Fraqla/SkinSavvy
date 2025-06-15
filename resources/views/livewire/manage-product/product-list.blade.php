@@ -1,7 +1,7 @@
 <div class="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
     <!-- Sidebar -->
     @livewire('sidebar')
-    
+
 
     <!-- Main Content -->
     <div class="flex-1 p-6 overflow-auto">
@@ -132,7 +132,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($products as $product)
-                            <tr class="hover:bg-gray-50 transition">
+                            <tr wire:key="product-{{ $product->id }}" class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div

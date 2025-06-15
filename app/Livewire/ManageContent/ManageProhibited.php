@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ManageProhibited extends Component
 {
-    
+
     use WithPagination, WithFileUploads;
 
     public $product_name, $detected_poison, $effect;
@@ -21,19 +21,26 @@ class ManageProhibited extends Component
     public $isEditFormVisible = false;
     public $isDeleteFormVisible = false;
     public $isDetailsModalVisible = false;
-public $selectedProduct;
+    public $selectedProduct;
+    public $perPage = 10;
+    public $page = 1;
+    protected $queryString = [
+        'page' => ['except' => 1],
+        'perPage' => ['except' => 10]
+    ];
 
     protected $rules = [
         'product_name' => 'required|string|max:255',
         'detected_poison' => 'nullable|string|max:255',
         'effect' => 'nullable|string',
-        'image' => 'nullable|image|max:2048', // 2MB max
+        'image' => 'nullable|image|max:2048',
     ];
 
     public function render()
     {
-        $products = ProhibitedProduct::paginate(10);
-        return view('livewire.manage-content.prohibited-product.prohibited-list', compact('products'));
+        return view('livewire.manage-content.prohibited-product.prohibited-list', [
+            'products' => ProhibitedProduct::latest()->paginate($this->perPage)
+        ]);
     }
 
     public function showAddForm()
@@ -45,15 +52,15 @@ public $selectedProduct;
     }
 
     public function showEditForm($id)
-{
-    $product = ProhibitedProduct::findOrFail($id);
-    $this->productId = $id;
-    $this->product_name = $product->product_name;
-    $this->detected_poison = $product->detected_poison;
-    $this->effect = $product->effect;
-    $this->tempImage = $product->image ? asset('storage/'.$product->image) : null;
-    $this->isEditFormVisible = true;
-}
+    {
+        $product = ProhibitedProduct::findOrFail($id);
+        $this->productId = $id;
+        $this->product_name = $product->product_name;
+        $this->detected_poison = $product->detected_poison;
+        $this->effect = $product->effect;
+        $this->tempImage = $product->image ? asset('storage/' . $product->image) : null;
+        $this->isEditFormVisible = true;
+    }
 
     public function showDeleteForm($id)
     {
@@ -64,57 +71,59 @@ public $selectedProduct;
     }
 
     public function showDetails($id)
-{
-    $this->selectedProduct = ProhibitedProduct::findOrFail($id);
-    $this->isDetailsModalVisible = true;
-}
-
-// Update the hideForms method
-public function hideForms()
-{
-    $this->isAddFormVisible = false;
-    $this->isEditFormVisible = false;
-    $this->isDeleteFormVisible = false;
-    $this->isDetailsModalVisible = false;
-    $this->resetInputFields();
-}
-
-    public function store()
-{
-    $this->validate();
-
-    $data = [
-        'product_name' => $this->product_name,
-        'detected_poison' => $this->detected_poison,
-        'effect' => $this->effect,
-    ];
-
-    // Handle image upload
-    if ($this->image) {
-        // Delete old image if updating
-        if ($this->productId) {
-            $oldProduct = ProhibitedProduct::find($this->productId);
-            if ($oldProduct->image) {
-                Storage::disk('public')->delete($oldProduct->image);
-            }
-        }
-        
-        // Store new image
-        $data['image'] = $this->image->store('prohibited-products', 'public');
+    {
+        $this->selectedProduct = ProhibitedProduct::findOrFail($id);
+        $this->isDetailsModalVisible = true;
     }
 
-    // Create or update product
-    ProhibitedProduct::updateOrCreate(['id' => $this->productId], $data);
+    // Update the hideForms method
+    public function hideForms()
+    {
+        $this->isAddFormVisible = false;
+        $this->isEditFormVisible = false;
+        $this->isDeleteFormVisible = false;
+        $this->isDetailsModalVisible = false;
+        $this->resetInputFields();
+    }
 
-    // Reset image property after save
-    $this->reset('image');
-    $this->tempImage = null;
+    public function store()
+    {
+        $this->validate();
 
-    session()->flash('message', 
-        $this->productId ? 'Product updated successfully.' : 'Product created successfully.');
+        $data = [
+            'product_name' => $this->product_name,
+            'detected_poison' => $this->detected_poison,
+            'effect' => $this->effect,
+        ];
 
-    $this->hideForms();
-}
+        // Handle image upload
+        if ($this->image) {
+            // Delete old image if updating
+            if ($this->productId) {
+                $oldProduct = ProhibitedProduct::find($this->productId);
+                if ($oldProduct->image) {
+                    Storage::disk('public')->delete($oldProduct->image);
+                }
+            }
+
+            // Store new image
+            $data['image'] = $this->image->store('prohibited-products', 'public');
+        }
+
+        // Create or update product
+        ProhibitedProduct::updateOrCreate(['id' => $this->productId], $data);
+
+        // Reset image property after save
+        $this->reset('image');
+        $this->tempImage = null;
+
+        session()->flash(
+            'message',
+            $this->productId ? 'Product updated successfully.' : 'Product created successfully.'
+        );
+
+        $this->hideForms();
+    }
 
     public function updatedImage()
     {
@@ -122,18 +131,20 @@ public function hideForms()
             'image' => 'image|max:2048',
         ]);
         $this->tempImage = $this->image->temporaryUrl();
-    } 
+    }
 
     public function delete()
-{
-    $product = ProhibitedProduct::find($this->productId);
-    if ($product->image) {
-        Storage::disk('public')->delete($product->image);
+    {
+        $product = ProhibitedProduct::find($this->productId);
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+        $product->delete();
+
+        $this->resetPage(); 
+        session()->flash('message', 'Product deleted successfully.');
+        $this->hideForms();
     }
-    $product->delete();
-    session()->flash('message', 'Product deleted successfully.');
-    $this->hideForms();
-}
 
 
     private function resetInputFields()
@@ -143,5 +154,5 @@ public function hideForms()
         $this->effect = '';
         $this->productId = null;
     }
-    
+
 }

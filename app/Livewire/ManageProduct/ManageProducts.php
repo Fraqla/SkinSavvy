@@ -43,11 +43,13 @@ class ManageProducts extends Component
     public $selectedSkinType = null;
     public $perPage = 10;
     public $enableAutoSearch = false;
+    public $page = 1; 
     protected $queryString = [
         'search' => ['except' => ''],
         'searchBy' => ['except' => 'name'],
         'selectedCategory' => ['except' => ''],
         'perPage' => ['except' => 10],
+        'page' => ['except' => 1],
     ];
 
     public function mount()

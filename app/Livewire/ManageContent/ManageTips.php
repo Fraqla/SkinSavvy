@@ -12,14 +12,18 @@ class ManageTips extends Component
 {
     use WithPagination, WithFileUploads;
 
-    // Remove the $tips property since we'll use pagination directly in view
     public $title, $description = '', $image, $tipId, $existingImage;
     public $isAddFormVisible = false;
     public $isEditFormVisible = false;
     public $isDeleteFormVisible = false;
     public $isDetailsModalVisible = false;
-public $currentTip = null;
-
+    public $currentTip = null;
+    public $perPage = 10;
+    public $page = 1;
+    protected $queryString = [
+        'page' => ['except' => 1],
+        'perPage' => ['except' => 10]
+    ];
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -32,7 +36,6 @@ public $currentTip = null;
     public function updateDescription($content)
     {
         $this->description = $content;
-        $this->emit('description-updated', $this->description);
     }
 
     public function mount()
@@ -51,19 +54,19 @@ public $currentTip = null;
     public function render()
     {
         return view('livewire.manage-content.tips.tips-list', [
-            'tips' => Tip::latest()->paginate(10) // Pass paginated data directly to view
+            'tips' => Tip::latest()->paginate($this->perPage)
         ]);
     }
 
     public function showAddForm()
     {
-        $this->hideAddForm(); // Reset first
+        $this->hideAddForm();
         $this->isAddFormVisible = true;
     }
 
     public function showEditForm($id)
     {
-        $this->hideEditForm(); // Reset first
+        $this->hideEditForm();
         $tip = Tip::findOrFail($id);
         $this->tipId = $id;
         $this->title = $tip->title;
@@ -74,12 +77,11 @@ public $currentTip = null;
 
     public function confirmDelete($id)
     {
-        $this->hideDeleteForm(); // Reset first
+        $this->hideDeleteForm();
         $this->tipId = $id;
         $this->isDeleteFormVisible = true;
     }
 
-    // Hide methods
     public function hideAddForm()
     {
         $this->reset(['title', 'description', 'image']);
@@ -87,10 +89,11 @@ public $currentTip = null;
     }
 
     public function hideEditForm()
-{
-    $this->reset(['title', 'description', 'image', 'tipId', 'existingImage']);
-    $this->isEditFormVisible = false;
-}
+    {
+        $this->reset(['title', 'description', 'image', 'tipId', 'existingImage']);
+        $this->isEditFormVisible = false;
+    }
+
     public function hideDeleteForm()
     {
         $this->reset(['tipId']);
@@ -98,10 +101,11 @@ public $currentTip = null;
     }
 
     public function showDetails($id)
-{
-    $this->currentTip = Tip::findOrFail($id);
-    $this->isDetailsModalVisible = true;
-}
+    {
+        $this->currentTip = Tip::findOrFail($id);
+        $this->isDetailsModalVisible = true;
+    }
+
     public function save()
     {
         $this->validate();
@@ -130,22 +134,22 @@ public $currentTip = null;
             $this->hideAddForm();
         }
 
-        $this->loadTips();
         session()->flash('message', $message);
+        $this->dispatch('tip-saved'); // Add this line
     }
 
     public function delete()
     {
         $tip = Tip::find($this->tipId);
-        
+
         if ($tip->image) {
             Storage::disk('public')->delete($tip->image);
         }
-        
+
         $tip->delete();
-        
+
         $this->hideDeleteForm();
-        $this->loadTips();
+        $this->resetPage();
         session()->flash('message', 'Tip deleted successfully.');
     }
 }

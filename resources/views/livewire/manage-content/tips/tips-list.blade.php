@@ -12,9 +12,12 @@
                     <p class="text-lg text-gray-600 font-medium">Create and organize beauty tips for your community</p>
                 </div>
                 <button wire:click="showAddForm"
-                class="mt-4 sm:mt-0 flex items-center px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium rounded-lg shadow-md hover:from-pink-600 hover:to-purple-700 transition duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                    class="mt-4 sm:mt-0 flex items-center px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium rounded-lg shadow-md hover:from-pink-600 hover:to-purple-700 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                            clip-rule="evenodd" />
                     </svg>
                     <span>Add New Tip</span>
                 </button>
@@ -50,8 +53,8 @@
 
             {{-- Tips List --}}
             <div class="space-y-6">
-                @forelse ($tips as $tip)
-                    <div
+                @forelse($tips as $tip)
+                    <div wire:key="tip-{{ $tip->id }}"
                         class="bg-white rounded-xl shadow-sm border border-gray-200/60 hover:shadow-md transition duration-300 overflow-hidden">
                         <div class="flex flex-col md:flex-row h-full">
                             {{-- Tip Image --}}
@@ -120,6 +123,7 @@
                             </div>
                         </div>
                     </div>
+                    </tr>
                 @empty
                     <div class="text-center bg-white rounded-xl shadow-sm border border-gray-200/60 py-16 px-6">
                         <div class="p-4 bg-blue-50 rounded-full inline-flex">
@@ -130,7 +134,8 @@
                             </svg>
                         </div>
                         <h3 class="mt-4 text-xl font-semibold text-gray-800">No tips yet</h3>
-                        <p class="mt-2 text-gray-500 max-w-md mx-auto">Create your first skincare tip to help users improve
+                        <p class="mt-2 text-gray-500 max-w-md mx-auto">Create your first skincare tip to help users
+                            improve
                             their routine</p>
                         <button wire:click="showAddForm"
                             class="mt-6 inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition duration-200">

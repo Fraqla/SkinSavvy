@@ -84,7 +84,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($categories as $category)
-                        <tr class="hover:bg-gray-50 transition">
+                        <tr wire:key="category-{{ $category->id }}" class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div
@@ -169,15 +169,21 @@
 
         <!-- Include Modals -->
         @if($showAddForm)
-            @include('livewire.manage-category.category-add')
+            <div wire:ignore.self>
+                @include('livewire.manage-category.category-add')
+            </div>
         @endif
 
         @if($showEditForm)
-            @include('livewire.manage-category.category-edit')
+            <div wire:ignore.self>
+                @include('livewire.manage-category.category-edit')
+            </div>
         @endif
 
         @if($confirmingDeletion)
-            @include('livewire.manage-category.category-delete')
+            <div wire:ignore.self>
+                @include('livewire.manage-category.category-delete')
+            </div>
         @endif
     </div>
 </div>

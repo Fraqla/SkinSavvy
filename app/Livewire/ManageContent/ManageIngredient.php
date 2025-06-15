@@ -22,6 +22,12 @@ class ManageIngredient extends Component
     public $selectedIngredient;
     public $newFact = '';
     public $newBenefit = '';
+    public $perPage = 10;
+    public $page = 1;
+    protected $queryString = [
+        'perPage' => ['except' => 10],
+        'page' => ['except' => 1]
+    ];
     protected $rules = [
         'ingredient_name' => 'required|string|max:255',
         'function' => 'required|string',
@@ -30,16 +36,15 @@ class ManageIngredient extends Component
         'benefits' => 'nullable|array',
         'benefits.*' => 'required|string|max:255',
         'image' => 'nullable|image|max:2048',
-    
+
     ];
     protected $listeners = ['closeModal' => 'closeDetailsModal'];
 
     public function render()
     {
-        $ingredients = Ingredient::paginate(10);
+        $ingredients = Ingredient::paginate($this->perPage);
         return view('livewire.manage-content.ingredients.ingredient-list', compact('ingredients'));
     }
-
     public function showAddForm()
     {
         $this->resetInputFields();
@@ -54,7 +59,7 @@ class ManageIngredient extends Component
         $this->function = $ingredient->function;
         $this->facts = $ingredient->facts;
         $this->benefits = $ingredient->benefits;
-        $this->tempImage = $ingredient->image ? asset('storage/'.$ingredient->image) : null;
+        $this->tempImage = $ingredient->image ? asset('storage/' . $ingredient->image) : null;
         $this->isEditFormVisible = true;
     }
 
@@ -96,8 +101,10 @@ class ManageIngredient extends Component
 
         Ingredient::updateOrCreate(['id' => $this->ingredientId], $data);
 
-        session()->flash('message', 
-            $this->ingredientId ? 'Ingredient updated successfully.' : 'Ingredient created successfully.');
+        session()->flash(
+            'message',
+            $this->ingredientId ? 'Ingredient updated successfully.' : 'Ingredient created successfully.'
+        );
 
         $this->hideForms();
     }
@@ -122,28 +129,28 @@ class ManageIngredient extends Component
     }
 
     public function showDetails($id)
-{
-    $this->selectedIngredient = Ingredient::findOrFail($id);
-    $this->isDetailsModalVisible = true;
-}
+    {
+        $this->selectedIngredient = Ingredient::findOrFail($id);
+        $this->isDetailsModalVisible = true;
+    }
 
-public function closeDetailsModal()
-{
-    $this->isDetailsModalVisible = false;
-    $this->selectedIngredient = null;
-}
+    public function closeDetailsModal()
+    {
+        $this->isDetailsModalVisible = false;
+        $this->selectedIngredient = null;
+    }
 
-public function addFact()
-{
-    $this->validate([
-        'newFact' => 'required|string|max:255'
-    ]);
+    public function addFact()
+    {
+        $this->validate([
+            'newFact' => 'required|string|max:255'
+        ]);
 
-    $this->facts[] = $this->newFact;
-    $this->newFact = '';
-}
+        $this->facts[] = $this->newFact;
+        $this->newFact = '';
+    }
 
-public function removeFact($index)
+    public function removeFact($index)
     {
         unset($this->facts[$index]);
         $this->facts = array_values($this->facts);
