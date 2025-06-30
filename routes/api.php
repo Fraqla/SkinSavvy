@@ -21,8 +21,11 @@ Route::get('/test', function () {
 
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
-Route::middleware('auth:sanctum')->get('/user/profile', [UserController::class, 'getProfile']);
-Route::middleware('auth:sanctum')->put('/user/profile', [UserController::class, 'updateProfile']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user/profile', [UserController::class, 'getProfile']);
+    Route::put('/user/profile', [UserController::class, 'updateProfile']);
+});
+
 Route::get('categories', [CategoryController::class, 'index']);
 Route::get('categories/{category}', [CategoryController::class, 'show']);
 Route::get('/products', [ProductController::class, 'getProductsByCategory']);

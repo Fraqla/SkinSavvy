@@ -72,11 +72,10 @@ public function wishlist() {
     return $this->hasMany(UserAllergy::class);
 }
 
-public function userSkinType()
+public function skinType()
 {
     return $this->hasOne(UserSkinType::class);
 }
-
 
 
 

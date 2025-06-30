@@ -107,7 +107,7 @@
             <div class="flex justify-end">
                 <button wire:click="closeDetailsModal" 
                 class="px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-200">
-                    Close Details
+                    Close
                 </button>
             </div>
         </div>

@@ -30,10 +30,11 @@ class ManageRoles extends Component
     public function updatePermissions()
     {
         $this->currentRole->syncPermissions($this->permissions);
-        session()->flash('success', 'Permissions updated successfully.');
+        session()->flash('message', 'Permissions updated successfully.'); 
         $this->editing = false;
         $this->mount();  // Refresh the role list
     }
+
 
     public function cancelEdit()
     {

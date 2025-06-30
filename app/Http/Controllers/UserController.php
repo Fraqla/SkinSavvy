@@ -63,51 +63,87 @@ class UserController extends Controller
         ], 401);
     }
 
-    $user = Auth::user();
+    $user = Auth::user()->load('skinType');
     $token = $user->createToken('authToken')->plainTextToken;
 
     return response()->json([
         'message' => 'Login successful',
-        'user' => $user,
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'skin_type' => $user->skinType ? [ 
+                'id' => $user->skinType->id,
+                'user_id' => $user->skinType->user_id,
+                'total_score' => $user->skinType->total_score,
+                'skin_type' => $user->skinType->skin_type,
+            ] : null
+        ],
         'token' => $token
     ], 200);
 }
 
+public function profile(Request $request)
+{
+    $user = User::with('skinType')->find(auth()->id());
+
+    return response()->json($user);
+}
+
 public function getProfile(Request $request)
 {
-    $user = $request->user()->load('userSkinType');
-    \Log::info('User with skin type:', ['user' => $user->toArray()]);
-    return response()->json(['user' => $user]);
+    return response()->json([
+        'id' => $request->user()->id,
+        'name' => $request->user()->name,
+        'email' => $request->user()->email,
+        'skin_type' => $request->user()->skinType, // Laravel auto-serializes the relationship
+    ]);
 }
 
 public function updateProfile(Request $request)
 {
     $user = $request->user();
 
+    // Add debug logging
+    \Log::info('Update Profile Request:', $request->all());
+
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email,' . $user->id,
-        'skin_type' => 'sometimes|array',
-        'skin_type.skin_type' => 'sometimes|string',
-        'skin_type.total_score' => 'sometimes|integer',
     ]);
 
-    $user->update([
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-    ]);
+    try {
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
 
-    // Update or create skin type
-    if (isset($validated['skin_type'])) {
-        $user->skinType()->updateOrCreate(
-            ['user_id' => $user->id],
-            $validated['skin_type']
-        );
+        \Log::info('User updated successfully:', $user->toArray());
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'skin_type' => $user->skinType ? [
+                        'id' => $user->skinType->id,
+                        'user_id' => $user->skinType->user_id,
+                        'total_score' => $user->skinType->total_score,
+                        'skin_type' => $user->skinType->skin_type,
+                    ] : null,
+                ],
+            ], 200);
+
+    } catch (\Exception $e) {
+        \Log::error('Profile update failed:', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return response()->json([
+            'message' => 'Profile update failed',
+            'error' => $e->getMessage()
+        ], 500);
     }
-
-    return response()->json([
-        'user' => $user->fresh()->load('skinType'),
-    ]);
 }
-
 }

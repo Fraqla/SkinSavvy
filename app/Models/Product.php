@@ -9,18 +9,27 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'ingredient', 'image', 'category_id', 'positive', 'negative', 'brand', 'suitability'];
+    protected $fillable = [
+        'name',
+        'description',
+        'ingredient',
+        'image',
+        'category_id',
+        'positive',
+        'negative',
+        'brand',
+        'suitability'
+    ];
 
-    // Define the relationship with Category
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
     public function wishlists()
-{
-    return $this->hasMany(Wishlist::class);
-}
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 
 
 }

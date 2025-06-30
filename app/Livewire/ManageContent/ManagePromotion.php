@@ -58,24 +58,25 @@ class ManagePromotion extends Component
 
         Promotion::create($validatedData);
 
+        session()->flash('message', 'Promotion successfully added!');
         $this->isAddFormVisible = false;
         $this->resetInputFields();
     }
 
     public function edit($id)
-{
-    $promotion = Promotion::findOrFail($id);
-    $this->promotionId = $promotion->id;
-    $this->title = $promotion->title;
-    $this->description = $promotion->description;
-    $this->start_date = $promotion->start_date;
-    $this->end_date = $promotion->end_date;
+    {
+        $promotion = Promotion::findOrFail($id);
+        $this->promotionId = $promotion->id;
+        $this->title = $promotion->title;
+        $this->description = $promotion->description;
+        $this->start_date = $promotion->start_date;
+        $this->end_date = $promotion->end_date;
 
-    // Set existing image URL (not file upload)
-    $this->image = $promotion->image;
+        // Set existing image URL (not file upload)
+        $this->image = $promotion->image;
 
-    $this->isEditFormVisible = true;
-}
+        $this->isEditFormVisible = true;
+    }
 
 
     public function update()
@@ -95,6 +96,7 @@ class ManagePromotion extends Component
         }
 
         $promotion->update($validatedData);
+        session()->flash('message', 'Promotion successfully updated!');
         $this->isEditFormVisible = false;
         $this->resetInputFields();
     }
@@ -108,6 +110,7 @@ class ManagePromotion extends Component
     public function delete()
     {
         Promotion::findOrFail($this->promotionId)->delete();
+        session()->flash('message', 'Promotion successfully deleted!');
         $this->isDeleteFormVisible = false;
     }
 
