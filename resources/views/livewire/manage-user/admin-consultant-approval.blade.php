@@ -66,6 +66,10 @@
                                 Email
                             </th>
                             <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Certificate
+                            </th>
+                            <th scope="col"
                                 class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Actions
                             </th>
@@ -83,13 +87,24 @@
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
                                             <div class="text-sm text-gray-500">Pending since
-                                                {{ $user->created_at->diffForHumans() }}</div>
+                                                {{ $user->created_at->diffForHumans() }}
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ $user->email }}
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                                    @if ($user->certificate)
+                                        <a href="{{ asset('storage/' . $user->certificate) }}" target="_blank">
+                                            View Certificate
+                                        </a>
+                                    @else
+                                        <span class="text-gray-400">No Certificate</span>
+                                    @endif
+                                </td>
+
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <button wire:click="approve({{ $user->id }})"
                                         class="text-green-600 hover:text-green-900 mr-4 inline-flex items-center">
@@ -137,11 +152,11 @@
 
 <!-- SweetAlert for Confirm Remove -->
 @push('scripts')
-<script>
-    document.addEventListener('livewire:load', function () {
-        window.livewire.on('confirmRemove', userId => {
-            Swal.fire(...); // Remove all this block
+    <script>
+        document.addEventListener('livewire:load', function () {
+            window.livewire.on('confirmRemove', userId => {
+                Swal.fire(...); // Remove all this block
+            });
         });
-    });
-</script>
+    </script>
 @endpush

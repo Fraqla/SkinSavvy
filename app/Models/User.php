@@ -27,6 +27,7 @@ class User extends Authenticatable
         'email',
         'password',
         'status',
+        'certificate',
     ];
 
     /**
@@ -53,29 +54,30 @@ class User extends Authenticatable
     }
 
     public function isAdminConsultant()
-{
-    return $this->role === 'admin_consultant';
-}
+    {
+        return $this->role === 'admin_consultant';
+    }
 
-public function userRole()
-{
-    return $this->hasOne('Spatie\Permission\Models\Role', 'id', 'role_id')
-        ->via('model_has_roles', 'model_id');
-}
+    public function userRole()
+    {
+        return $this->hasOne('Spatie\Permission\Models\Role', 'id', 'role_id')
+            ->via('model_has_roles', 'model_id');
+    }
 
-public function wishlist() {
+    public function wishlist()
+    {
         return $this->belongsTo(Wishlist::class);
     }
 
     public function allergies()
-{
-    return $this->hasMany(UserAllergy::class);
-}
+    {
+        return $this->hasMany(UserAllergy::class);
+    }
 
-public function skinType()
-{
-    return $this->hasOne(UserSkinType::class);
-}
+    public function skinType()
+    {
+        return $this->hasOne(UserSkinType::class);
+    }
 
 
 

@@ -13,6 +13,7 @@ class ManageProhibited extends Component
 
     use WithPagination, WithFileUploads;
 
+    public $currentImage;
     public $product_name, $detected_poison, $effect;
     public $image;
     public $tempImage;
@@ -60,6 +61,9 @@ class ManageProhibited extends Component
         $this->effect = $product->effect;
         $this->tempImage = $product->image ? asset('storage/' . $product->image) : null;
         $this->isEditFormVisible = true;
+        $this->currentImage = $product->image ? asset('storage/' . $product->image) : null;
+        $this->tempImage = null; 
+
     }
 
     public function showDeleteForm($id)
@@ -126,12 +130,13 @@ class ManageProhibited extends Component
     }
 
     public function updatedImage()
-    {
-        $this->validate([
-            'image' => 'image|max:2048',
-        ]);
-        $this->tempImage = $this->image->temporaryUrl();
-    }
+{
+    $this->validate([
+        'image' => 'image|max:2048',
+    ]);
+    $this->tempImage = $this->image->temporaryUrl();
+}
+
 
     public function delete()
     {
@@ -141,7 +146,7 @@ class ManageProhibited extends Component
         }
         $product->delete();
 
-        $this->resetPage(); 
+        $this->resetPage();
         session()->flash('message', 'Product deleted successfully.');
         $this->hideForms();
     }

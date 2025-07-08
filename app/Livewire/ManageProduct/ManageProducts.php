@@ -43,7 +43,7 @@ class ManageProducts extends Component
     public $selectedSkinType = null;
     public $perPage = 10;
     public $enableAutoSearch = false;
-    public $page = 1; 
+    public $page = 1;
     protected $queryString = [
         'search' => ['except' => ''],
         'searchBy' => ['except' => 'name'],
@@ -115,8 +115,8 @@ class ManageProducts extends Component
             'description' => 'required',
             'image' => 'nullable|image|max:1024',
             'ingredient' => 'nullable|string',
-            'positiveAspects' => 'required|array',
-            'negativeAspects' => 'required|array',
+            'positiveAspects' => 'required|array|min:1|max:10',
+            'negativeAspects' => 'required|array|min:1|max:10',
             'brand' => 'nullable|string',
             'selectedSkinType' => 'required|string|in:' . implode(',', $this->skinKnowledges->toArray()),
         ]);
@@ -164,8 +164,8 @@ class ManageProducts extends Component
             'category_id' => 'required',
             'description' => 'required',
             'ingredient' => 'nullable|string',
-            'positiveAspects' => 'required|array',
-            'negativeAspects' => 'required|array',
+            'positiveAspects' => 'required|array|min:1|max:10',
+            'negativeAspects' => 'required|array|min:1|max:10',
             'image' => 'nullable|image|max:1024',
             'brand' => 'nullable|string',
             'selectedSkinType' => 'required|string|in:' . implode(',', $this->skinKnowledges->toArray()),
@@ -279,11 +279,14 @@ class ManageProducts extends Component
 
     public function addPositiveAspect()
     {
+        $this->validateOnly('newPositiveAspect', [
+            'newPositiveAspect' => 'required|string|max:255'
+        ]);
+
         if (!empty($this->newPositiveAspect)) {
-            $this->positiveAspects[] = $this->newPositiveAspect;
+            $this->positiveAspects = [...$this->positiveAspects, $this->newPositiveAspect];
             $this->newPositiveAspect = '';
-        } else {
-            $this->addError('newPositiveAspect', 'Please enter a positive aspect.');
+            $this->resetErrorBag('newPositiveAspect');
         }
     }
 
@@ -295,11 +298,14 @@ class ManageProducts extends Component
 
     public function addNegativeAspect()
     {
+        $this->validateOnly('newNegativeAspect', [
+            'newNegativeAspect' => 'required|string|max:255'
+        ]);
+
         if (!empty($this->newNegativeAspect)) {
-            $this->negativeAspects[] = $this->newNegativeAspect;
+            $this->negativeAspects = [...$this->negativeAspects, $this->newNegativeAspect];
             $this->newNegativeAspect = '';
-        } else {
-            $this->addError('newNegativeAspect', 'Please enter a negative aspect.');
+            $this->resetErrorBag('newNegativeAspect');
         }
     }
 

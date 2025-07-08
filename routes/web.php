@@ -105,7 +105,7 @@ Route::get('/prohibited-products/{filename}', function ($filename) {
         ->header('Access-Control-Allow-Origin', '*'); 
 });
 
-// IPromotion image route
+// Promotion image route
 Route::get('/promotion-image/{filename}', function ($filename) {
     $path = 'promotions/' . $filename;
 
@@ -211,9 +211,8 @@ Route::middleware(['auth'])->group(function () {
             ->name('waiting-approval');
     });
 
-    Route::middleware(['auth', 'can:manage roles'])->group(function () {
         Route::get('/manage-roles', ManageRoles::class)->name('manage-roles');
-    });
+
 
 
 

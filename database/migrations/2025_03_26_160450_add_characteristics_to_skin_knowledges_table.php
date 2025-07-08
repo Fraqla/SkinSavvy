@@ -8,10 +8,13 @@ return new class extends Migration
 {
     public function up()
 {
-    Schema::table('skin_knowledges', function (Blueprint $table) {
-        $table->text('characteristics')->after('skin_type');
-    });
+    if (!Schema::hasColumn('skin_knowledges', 'characteristics')) {
+        Schema::table('skin_knowledges', function (Blueprint $table) {
+            $table->text('characteristics')->after('skin_type');
+        });
+    }
 }
+
 
 public function down()
 {

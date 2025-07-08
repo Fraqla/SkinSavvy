@@ -28,7 +28,7 @@
                 <div class="ml-4">
                     <h3 class="text-lg font-medium text-gray-900">Delete this skin knowledge?</h3>
                     <div class="mt-2 text-sm text-gray-500">
-                        <p>Are you sure you want to delete <span class="font-medium">"{{ $skinTypeToDelete ?? 'this skin knowledge' }}"</span>? This action cannot be undone.</p>
+                        <p>Are you sure you want to delete <span class="font-medium">{{ $skinTypeToDelete ?? 'this skin knowledge' }}</span>? This action cannot be undone.</p>
                     </div>
                 </div>
             </div>

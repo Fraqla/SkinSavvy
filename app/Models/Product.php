@@ -21,6 +21,7 @@ class Product extends Model
         'suitability'
     ];
 
+
     public function category()
     {
         return $this->belongsTo(Category::class);

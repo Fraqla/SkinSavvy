@@ -52,27 +52,46 @@
                 </div>
 
                 <!-- Image Upload -->
-                <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
-                    <div
-                        class="relative border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition duration-200">
-                        <div class="flex flex-col items-center justify-center py-8 px-4 text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <p class="mt-2 text-sm text-gray-500">
-                                Click to upload an image (JPEG, PNG)
-                            </p>
-                        </div>
-                        <input type="file" wire:model="image"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                    </div>
-                    @error('image')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+<div class="mt-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+
+    <!-- ✅ Show preview if editing -->
+    @if ($existingImage && !$image)
+        <div class="mb-4">
+            <p class="text-sm text-gray-500 mb-1">Current Image:</p>
+            <img src="{{ Storage::url($existingImage) }}" alt="Current Image"
+                 class="w-40 h-40 object-cover rounded border">
+        </div>
+    @endif
+
+    <!-- ✅ Show preview of new selected file -->
+    @if ($image)
+        <div class="mb-4">
+            <p class="text-sm text-gray-500 mb-1">New Image Preview:</p>
+            <img src="{{ $image->temporaryUrl() }}" alt="New Image"
+                 class="w-40 h-40 object-cover rounded border">
+        </div>
+    @endif
+
+    <div class="relative border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition duration-200">
+        <div class="flex flex-col items-center justify-center py-8 px-4 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p class="mt-2 text-sm text-gray-500">
+                Click to upload an image (JPEG, PNG)
+            </p>
+        </div>
+        <input type="file" wire:model="image"
+               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+    </div>
+    @error('image')
+    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+    @enderror
+</div>
+
 
                 <!-- Description Field -->
                 <div>

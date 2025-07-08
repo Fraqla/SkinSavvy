@@ -72,18 +72,24 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
 
-                    @if ($existingImage && !$image)
+                    @if ($image)
+                        <!-- New upload preview -->
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-500 mb-2">New Image Preview:</p>
+                            <div class="relative w-40 h-40 rounded-lg overflow-hidden border border-gray-200">
+                                <img src="{{ $image->temporaryUrl() }}" class="w-full h-full object-cover" />
+                            </div>
+                        </div>
+                    @elseif ($existingImage)
+                        <!-- Current image preview -->
                         <div class="mb-4">
                             <p class="text-sm text-gray-500 mb-2">Current Image:</p>
                             <div class="relative w-40 h-40 rounded-lg overflow-hidden border border-gray-200">
                                 <img src="{{ asset('storage/' . $existingImage) }}" class="w-full h-full object-cover" />
-                                <div
-                                    class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition duration-200">
-                                    <span class="text-white text-sm font-medium">Current Image</span>
-                                </div>
                             </div>
                         </div>
                     @endif
+
 
                     <div class="flex items-center justify-center w-full">
                         <label for="image"
@@ -117,31 +123,20 @@
             <!-- Edit Positive Aspects -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Edit Positive Aspects</label>
-
-                <!-- Edit Positive Aspect Input -->
-                <div class="flex space-x-3">
-                    <div class="flex-1 relative">
-                        <input type="text" wire:model="editedPositiveAspect"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200 shadow-sm"
-                            placeholder="Edit positive aspect">
-                        @error('editedPositiveAspect')
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        @enderror
+                <!-- Add NEW Positive Aspect -->
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Add New Positive Aspect</label>
+                    <div class="flex space-x-3">
+                        <input type="text" wire:model="newPositiveAspect"
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400"
+                            placeholder="Enter new positive aspect">
+                        <button type="button" wire:click="addPositiveAspect"
+                            class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg hover:from-pink-600 hover:to-purple-600">
+                            Add
+                        </button>
                     </div>
-                    <button type="button" wire:click="updatePositiveAspect"
-                        class="px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-200">
-                        Update
-                    </button>
+                    @error('newPositiveAspect') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                 </div>
-                @error('editedPositiveAspect')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
 
                 <!-- Current Positive Aspects List -->
                 <div class="mt-4 space-y-3">
@@ -158,7 +153,6 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
-
                         </div>
                     @endforeach
                 </div>
@@ -166,31 +160,21 @@
                 <!-- Edit Negative Aspects -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Edit Negative Aspects</label>
-
-                    <!-- Edit Negative Aspect Input -->
-                    <div class="flex space-x-3">
-                        <div class="flex-1 relative">
-                            <input type="text" wire:model="editedNegativeAspect"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400 transition duration-200 shadow-sm"
-                                placeholder="Edit negative aspect">
-                            @error('editedNegativeAspect')
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            @enderror
+                    <!-- Add NEW Negative Aspect -->
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Add New Negative Aspect</label>
+                        <div class="flex space-x-3">
+                            <input type="text" wire:model="newNegativeAspect"
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-400"
+                                placeholder="Enter new negative aspect">
+                            <button type="button" wire:click="addNegativeAspect"
+                                class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg hover:from-pink-600 hover:to-purple-600">
+                                Add
+                            </button>
                         </div>
-                        <button type="button" wire:click="updateNegativeAspect"
-                            class="px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-200">
-                            Update
-                        </button>
+                        @error('newNegativeAspect') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
-                    @error('editedNegativeAspect')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+
 
                     <!-- Current Negative Aspects List -->
                     <div class="mt-4 space-y-3">
@@ -207,10 +191,10 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
-
                             </div>
                         @endforeach
                     </div>
+
 
                     <!-- Modal Footer -->
                     <div class="sticky bottom-0 bg-white pt-4 pb-2 border-t border-gray-200">

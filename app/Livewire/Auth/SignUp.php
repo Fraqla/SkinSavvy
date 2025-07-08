@@ -6,20 +6,25 @@ use Livewire\Component;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Livewire\WithFileUploads;
 
 class SignUp extends Component
 {
+    use WithFileUploads;
     public $name;
     public $email;
     public $password;
     public $password_confirmation;
     public $role;
+    public $certificate;
+
 
     // Validation rules
     protected $rules = [
         'name' => 'required|min:3',
         'email' => 'required|email|unique:users',
         'password' => 'required|min:6|confirmed',
+        'certificate' => 'required|file|mimes:pdf|max:2048',
     ];
 
     public function register()
@@ -28,13 +33,22 @@ class SignUp extends Component
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
         'password' => 'required|min:6|confirmed',
+        'certificate' => 'required|file|mimes:pdf|max:2048',
     ]);
+
+      // Store certificate file if uploaded
+        $certificatePath = null;
+        if ($this->certificate) {
+            $certificatePath = $this->certificate->store('certificates', 'public');
+        }
+
 
     $user = User::create([
         'name' => $this->name,
         'email' => $this->email,
         'password' => bcrypt($this->password),
-        'status' => 'pending', // Set status to pending
+        'status' => 'pending', 
+        'certificate' => $certificatePath,
     ]);
 
     // Properly assign the role using Laravel Permissions package

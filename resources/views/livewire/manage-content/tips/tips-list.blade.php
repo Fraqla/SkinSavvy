@@ -82,9 +82,6 @@
                             <div class="flex-1 p-6 flex flex-col">
                                 <div class="flex-1">
                                     <h2 class="text-xl font-bold text-gray-800 mb-3">{{ $tip->title }}</h2>
-                                    <div class="prose prose-indigo max-w-none text-gray-600">
-                                        {!! $tip->description !!}
-                                    </div>
                                 </div>
 
                                 {{-- Action Buttons --}}
